@@ -20,10 +20,11 @@
             font-family: 'Arial Black', Gadget, sans-serif;
             display: flex;
             flex-direction: column;
-            justify-content: center; /* Centraliza o placar verticalmente na tela */
+            justify-content: flex-end; 
             align-items: center;
             height: 100vh;
             margin: 0;
+            padding-bottom: 60px; /* Respiro no fundo da tela */
             overflow: hidden;
         }
 
@@ -45,6 +46,7 @@
             max-width: 900px;
             text-align: center;
             display: flex;
+            margin-bottom: 25px;
             flex-direction: column;
             align-items: center;
         }
@@ -53,7 +55,7 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 12px; /* Margem entre nomes e barra */
         }
 
         .nome-personagem {
@@ -70,8 +72,9 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* --- BARRA COM MARGEM AJUSTADA --- */
         .barra-container {
-            width: 100%; /* Ajustado para 100% para caber no site */
+            width: 100%; 
             height: 38px;
             background-color: var(--cor-direita);
             border: 4px solid #000;
@@ -79,6 +82,8 @@
             overflow: hidden;
             position: relative;
             box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 2px 8px rgba(0,0,0,0.6);
+            transition: transform 0.1s ease;
+            margin-bottom: 25px; /* A margem que você pediu para não ficar grudado */
         }
 
         .barra-container::before {
@@ -133,7 +138,6 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-top: 15px;
         }
 
         .views {
@@ -164,9 +168,8 @@
         @keyframes pulse-live { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
         @media (max-width: 600px) {
-            .container { margin-top: 20px; }
             .nome-personagem { font-size: 1.1rem; }
-            .barra-container { height: 26px; border-width: 3px; }
+            .barra-container { height: 26px; border-width: 3px; margin-bottom: 15px; }
             .views { font-size: 0.8rem; padding: 6px 12px; }
         }
     </style>
@@ -202,7 +205,6 @@
     </div>
 
     <script>
-        // API DO YOUTUBE - ESTÁ INTEGRADA AQUI
         const API_KEY = 'AIzaSyDrmeYowWXA0MGapkS45g9eHC_zkMULJhY';
         const VIDEOS_ESQUERDA = ['0A7PCwW8gsM','po57wIMAKbA']; 
         const VIDEOS_DIREITA  = ['RB3DT7c_hEs']; 
@@ -257,7 +259,6 @@
                     atualizarPlacar();
                 }
             } catch (e) { 
-                // Fallback caso a API dê erro (apenas para teste visual)
                 if(viewsEsquerda === 0) { viewsEsquerda = 500000; viewsDireita = 500000; atualizarPlacar(); }
             }
         }
