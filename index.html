@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mundo Torajo - Versus Live</title>
+    <style>
+        :root {
+            --cor-esquerda: #2ecc71; 
+            --cor-direita: #e622cc;  
+            --cor-navbar: #00a859;
+            --cor-sidebar: #4d4398;
+        }
+
+        body {
+            background-color: #fff;
+            background-image: url('image_744b92.png'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Arial Black', Gadget, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: var(--cor-navbar);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 4px solid #000;
+            z-index: 100;
+        }
+
+        .menu-btn {
+            position: absolute;
+            left: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar img {
+            height: 45px;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 250px;
+            height: 100%;
+            background-color: var(--cor-sidebar);
+            z-index: 200;
+            transition: transform 0.3s ease, visibility 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-right: 4px solid #000;
+            visibility: hidden;
+            will-change: transform;
+        }
+
+        .sidebar.active {
+            visibility: visible;
+            transform: translateX(300px);
+        }
+
+        .close-btn {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 35px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            padding: 15px 0;
+            border-bottom: 2px solid rgba(0,0,0,0.2);
+            text-transform: uppercase;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            z-index: 150;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .container {
+            width: 95%;
+            max-width: 900px;
+            text-align: center;
+            margin-bottom: 50px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .nomes-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .nome-personagem {
+            color: #ffffff;
+            text-transform: uppercase;
+            -webkit-text-stroke: 1.5px #000;
+            text-stroke: 1.5px #000;
+            font-size: 2rem;
+            width: 48%;
+            display: inline-block;
+            /* FIX: Usando text-shadow forte para profundidade sem quebrar */
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.8);
+            transition: transform 0.2s ease;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- BARRA COM BRILHO E PROFUNDIDADE --- */
+        .barra-container {
+            width: 150%; /* Largura corrigida para 100% para não quebrar */
+            height: 35px;
+            background-color: var(--cor-direita);
+            border: 4px solid #000;
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+            /* Glow e sombra interna voltaram */
+            box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 2px 8px rgba(0,0,0,0.6);
+            transition: transform 0.1s ease, box-shadow 0.3s ease;
+        }
+
+        /* Reflexo de Vidro (Glossy) voltou */
+        .barra-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 45%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 100%);
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .progresso-esquerda {
+            height: 100%;
+            width: 50%; 
+            background-color: var(--cor-esquerda);
+            transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            border-right: 4px solid #000;
+            position: relative;
+            z-index: 2;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+        }
+
+        .listras-esquerda, .listras-direita {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent 100%);
+            background-size: 40px 40px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .modo-turbo {
+            opacity: 1 !important;
+            animation: moveStripes 0.3s linear infinite !important;
+            /* Brilho extra no turbo */
+            filter: brightness(1.2) drop-shadow(0 0 5px white);
+        }
+
+        @keyframes moveStripes {
+            from { background-position: 0 0; }
+            to { background-position: 40px 0; }
+        }
+
+        @keyframes shakeLight {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(1px, 1px) rotate(0.1deg); }
+            50% { transform: translate(-1px, 0px) rotate(-0.1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        .tremer { 
+            animation: shakeLight 0.3s infinite ease-in-out;
+            /* Glow pulsante no tremor voltou */
+            
+        }
+
+        /* --- VIEWS STYLES --- */
+        .views-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        /* CAIXAS DE VIEWS ESTILIZADAS (Glow e sombra voltaram) */
+        .views {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: 3px solid #333;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            position: relative;
+            box-shadow: 0 4px 0px #000;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Detalhe de cor dinâmico voltou */
+        #txtEsquerda { border-color: var(--cor-esquerda); }
+        #txtDireita { border-color: var(--cor-direita); }
+
+        /* Pequeno brilho interno voltou */
+        .views::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        /* Ícone de "LIVE" simulado voltou */
+        .views::after {
+            content: '●';
+            color: #ff0000;
+            font-size: 0.8rem;
+            animation: pulse-live 1.5s infinite;
+        }
+
+        @keyframes pulse-live {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @media (max-width: 600px) {
+            .container { margin-bottom: 30px; }
+            .nome-personagem { font-size: 1.1rem; }
+            .barra-container { height: 26px; border-width: 3px; width: 100%; }
+            .views { font-size: 0.8rem; padding: 6px 12px; border-width: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="overlay" class="overlay" onclick="toggleMenu()"></div>
+
+    <div id="sidebar" class="sidebar">
+        <button class="close-btn" onclick="toggleMenu()">×</button>
+        <a href="#">Início</a>
+        <a href="#">Produtos</a>
+        <a href="#">Curiosidades</a>
+        <a href="#">Personagens</a>
+        <a href="#">Contato</a>
+    </div>
+
+    <nav class="navbar">
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+        <img src="https://mundotorajo.com.br/cdn/shop/files/logo_mundo_torajo.png" alt="Mundo Torajo">
+    </nav>
+
+    <div class="container">
+        <div class="nomes-container">
+            <span id="nomeEsquerda" class="nome-personagem">PRINCIPAIS</span>
+            <span id="nomeDireita" class="nome-personagem">SECUNDÁRIOS</span>
+        </div>
+
+        <div id="barraVersus" class="barra-container">
+            <div id="listrasDir" class="listras-direita"></div>
+            <div id="barraProgresso" class="progresso-esquerda">
+                <div id="listrasEsq" class="listras-esquerda"></div>
+            </div>
+        </div>
+
+        <div class="views-container">
+            <div class="views-box" style="width:48%; display:flex; justify-content:center;">
+                <span id="txtEsquerda" class="views">0 views</span>
+            </div>
+            <div class="views-box" style="width:48%; display:flex; justify-content:center;">
+                <span id="txtDireita" class="views">0 views</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+        const API_KEY = 'AIzaSyDrmeYowWXA0MGapkS45g9eHC_zkMULJhY';
+        const VIDEOS_ESQUERDA = ['0A7PCwW8gsM','po57wIMAKbA']; 
+        const VIDEOS_DIREITA  = ['RB3DT7c_hEs']; 
+        let viewsEsquerda = 0; 
+        let viewsDireita = 0;
+        const todosIds = [...VIDEOS_ESQUERDA, ...VIDEOS_DIREITA].join(',');
+
+        function atualizarPlacar() {
+            const total = (viewsEsquerda + viewsDireita) || 1; 
+            const porcentagemEsquerda = (viewsEsquerda / total) * 100;
+            const barra = document.getElementById('barraVersus');
+            const progresso = document.getElementById('barraProgresso');
+            const listrasEsq = document.getElementById('listrasEsq');
+            const listrasDir = document.getElementById('listrasDir');
+            const nomeEsq = document.getElementById('nomeEsquerda');
+            const nomeDir = document.getElementById('nomeDireita');
+
+            listrasEsq.classList.remove('modo-turbo');
+            listrasDir.classList.remove('modo-turbo');
+            barra.classList.remove('tremer');
+            nomeEsq.classList.remove('tremer');
+            nomeDir.classList.remove('tremer');
+            
+            listrasEsq.style.opacity = "0";
+            listrasDir.style.opacity = "0";
+
+            if (porcentagemEsquerda > 65) {
+                listrasEsq.classList.add('modo-turbo');
+                barra.classList.add('tremer');
+                nomeDir.classList.add('tremer');
+            } else if (porcentagemEsquerda < 35) {
+                listrasDir.classList.add('modo-turbo');
+                barra.classList.add('tremer');
+                nomeEsq.classList.add('tremer');
+            }
+
+            progresso.style.width = porcentagemEsquerda + "%";
+            document.getElementById('txtEsquerda').innerText = viewsEsquerda.toLocaleString('pt-BR') + " views";
+            document.getElementById('txtDireita').innerText = viewsDireita.toLocaleString('pt-BR') + " views";
+        }
+
+        async function buscarViews() {
+            try {
+                const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${todosIds}&key=${API_KEY}`);
+                const data = await res.json();
+                if (data.items) {
+                    let somaEsq = 0; let somaDir = 0;
+                    data.items.forEach(video => {
+                        const views = parseInt(video.statistics.viewCount);
+                        if (VIDEOS_ESQUERDA.includes(video.id)) somaEsq += views;
+                        else if (VIDEOS_DIREITA.includes(video.id)) somaDir += views;
+                    });
+                    viewsEsquerda = somaEsq; viewsDireita = somaDir;
+                    atualizarPlacar();
+                }
+            } catch (e) { 
+                if(viewsEsquerda === 0) { viewsEsquerda = 500000; viewsDireita = 500000; atualizarPlacar(); }
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            const inc = 10000;
+            const key = e.key.toLowerCase();
+            if (key === 's') viewsEsquerda += inc;
+            if (key === 'p') viewsDireita += inc;
+            if (key === 'r') { viewsEsquerda = 0; viewsDireita = 0; }
+            atualizarPlacar();
+        });
+
+        buscarViews();
+        setInterval(buscarViews, 300000); 
+    </script>
+</body>
+</html>
