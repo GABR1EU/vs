@@ -11,42 +11,29 @@
         }
 
         body {
-    background-color: #fff;
-    background-image: url('image_744b92.png'); 
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    font-family: 'Arial Black', Gadget, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Agora centraliza no meio dos 500px */
-    align-items: center;
-    height: 500px;           /* Altura fixa para não criar buracos vazios */
-    margin: 0;
-    padding: 0;
-    overflow: hidden;        /* Evita que apareça barra de rolagem chata */
-}
-
-        .debug-hint {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.8);
-            color: #2ecc71;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            border: 1px solid #2ecc71;
-            z-index: 10;
+            background-color: #fff;
+            background-image: url('image_744b92.png'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Arial Black', Gadget, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
         }
 
+        /* --- CONTEÚDO PRINCIPAL --- */
         .container {
             width: 95%;
             max-width: 900px;
             text-align: center;
+            margin-bottom: 50px; 
             display: flex;
-            margin-bottom: 25px;
             flex-direction: column;
             align-items: center;
         }
@@ -55,7 +42,7 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 12px; /* Margem entre nomes e barra */
+            margin-bottom: 8px;
         }
 
         .nome-personagem {
@@ -72,18 +59,17 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- BARRA COM MARGEM AJUSTADA --- */
+        /* --- BARRA COM BRILHO E PROFUNDIDADE --- */
         .barra-container {
             width: 100%; 
-            height: 38px;
+            height: 35px;
             background-color: var(--cor-direita);
             border: 4px solid #000;
             border-radius: 50px;
             overflow: hidden;
             position: relative;
             box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 2px 8px rgba(0,0,0,0.6);
-            transition: transform 0.1s ease;
-            margin-bottom: 25px; /* A margem que você pediu para não ficar grudado */
+            transition: transform 0.1s ease, box-shadow 0.3s ease;
         }
 
         .barra-container::before {
@@ -123,7 +109,10 @@
             filter: brightness(1.2) drop-shadow(0 0 5px white);
         }
 
-        @keyframes moveStripes { from { background-position: 0 0; } to { background-position: 40px 0; } }
+        @keyframes moveStripes {
+            from { background-position: 0 0; }
+            to { background-position: 40px 0; }
+        }
 
         @keyframes shakeLight {
             0% { transform: translate(0, 0) rotate(0deg); }
@@ -132,12 +121,16 @@
             100% { transform: translate(0, 0) rotate(0deg); }
         }
 
-        .tremer { animation: shakeLight 0.3s infinite ease-in-out; }
+        .tremer { 
+            animation: shakeLight 0.3s infinite ease-in-out;
+        }
 
+        /* --- VIEWS STYLES --- */
         .views-container {
             display: flex;
             justify-content: space-between;
             width: 100%;
+            margin-top: 15px;
         }
 
         .views {
@@ -148,15 +141,26 @@
             border: 3px solid #333;
             font-size: 1.1rem;
             white-space: nowrap;
+            position: relative;
             box-shadow: 0 4px 0px #000;
             display: flex;
             align-items: center;
             gap: 8px;
-            position: relative;
         }
 
         #txtEsquerda { border-color: var(--cor-esquerda); }
         #txtDireita { border-color: var(--cor-direita); }
+
+        .views::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
 
         .views::after {
             content: '●';
@@ -165,21 +169,20 @@
             animation: pulse-live 1.5s infinite;
         }
 
-        @keyframes pulse-live { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes pulse-live {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
 
         @media (max-width: 600px) {
+            .container { margin-bottom: 30px; }
             .nome-personagem { font-size: 1.1rem; }
-            .barra-container { height: 26px; border-width: 3px; margin-bottom: 15px; }
-            .views { font-size: 0.8rem; padding: 6px 12px; }
+            .barra-container { height: 26px; border-width: 3px; width: 100%; }
+            .views { font-size: 0.8rem; padding: 6px 12px; border-width: 2px; }
         }
     </style>
 </head>
 <body>
-
-    <div class="debug-hint">
-        <b>DEBUG MODE</b><br>
-        [S] +Principais | [P] +Secundários
-    </div>
 
     <div class="container">
         <div class="nomes-container">
@@ -208,7 +211,6 @@
         const API_KEY = 'AIzaSyDrmeYowWXA0MGapkS45g9eHC_zkMULJhY';
         const VIDEOS_ESQUERDA = ['0A7PCwW8gsM','po57wIMAKbA']; 
         const VIDEOS_DIREITA  = ['RB3DT7c_hEs']; 
-        
         let viewsEsquerda = 0; 
         let viewsDireita = 0;
         const todosIds = [...VIDEOS_ESQUERDA, ...VIDEOS_DIREITA].join(',');
@@ -225,6 +227,7 @@
 
             listrasEsq.classList.remove('modo-turbo');
             listrasDir.classList.remove('modo-turbo');
+            barra.classList.remove('tremer');
             nomeEsq.classList.remove('tremer');
             nomeDir.classList.remove('tremer');
             
@@ -233,9 +236,11 @@
 
             if (porcentagemEsquerda > 65) {
                 listrasEsq.classList.add('modo-turbo');
+                barra.classList.add('tremer');
                 nomeDir.classList.add('tremer');
             } else if (porcentagemEsquerda < 35) {
                 listrasDir.classList.add('modo-turbo');
+                barra.classList.add('tremer');
                 nomeEsq.classList.add('tremer');
             }
 
