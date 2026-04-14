@@ -208,77 +208,79 @@
     </div>
 
     <script>
-        const API_KEY = 'AIzaSyDrmeYowWXA0MGapkS45g9eHC_zkMULJhY';
-        const VIDEOS_ESQUERDA = ['0A7PCwW8gsM']; 
-        const VIDEOS_DIREITA  = ['ZmQAGt6_yC8']; 
-        let viewsEsquerda = 0; 
-        let viewsDireita = 0;
-        const todosIds = [...VIDEOS_ESQUERDA, ...VIDEOS_DIREITA].join(',');
+    // Strings codificadas para dificultar a busca direta por texto
+    const _0x4f2a = ['QUl6YVN5RHJtZVlv d1dYQTBNR2Fwa1M0NWc5ZUhDX3prTVVMSmhZ', 'MEE3UEN3Vzhnc00=', 'Wm1RQUd0Nl95Qzg='];
+    const _0x1b3c = (i) => atob(_0x4f2a[i].replace(/\s/g, ''));
 
-        function atualizarPlacar() {
-            const total = (viewsEsquerda + viewsDireita) || 1; 
-            const porcentagemEsquerda = (viewsEsquerda / total) * 100;
-            const barra = document.getElementById('barraVersus');
-            const progresso = document.getElementById('barraProgresso');
-            const listrasEsq = document.getElementById('listrasEsq');
-            const listrasDir = document.getElementById('listrasDir');
-            const nomeEsq = document.getElementById('nomeEsquerda');
-            const nomeDir = document.getElementById('nomeDireita');
+    // Variáveis com nomes não descritivos
+    let _v1 = 0; 
+    let _v2 = 0;
+    const _k = _0x1b3c(0);
+    const _id1 = [_0x1b3c(1)];
+    const _id2 = [_0x1b3c(2)];
+    const _all = [..._id1, ..._id2].join(',');
 
-            listrasEsq.classList.remove('modo-turbo');
-            listrasDir.classList.remove('modo-turbo');
-            barra.classList.remove('tremer');
-            nomeEsq.classList.remove('tremer');
-            nomeDir.classList.remove('tremer');
-            
-            listrasEsq.style.opacity = "0";
-            listrasDir.style.opacity = "0";
+    function _uP() {
+        const t = (_v1 + _v2) || 1;
+        const pE = (_v1 / t) * 100;
+        
+        const _b = document.getElementById('barraVersus');
+        const _p = document.getElementById('barraProgresso');
+        const _lE = document.getElementById('listrasEsq');
+        const _lD = document.getElementById('listrasDir');
+        const _nE = document.getElementById('nomeEsquerda');
+        const _nD = document.getElementById('nomeDireita');
 
-            if (porcentagemEsquerda > 65) {
-                listrasEsq.classList.add('modo-turbo');
-                barra.classList.add('tremer');
-                nomeDir.classList.add('tremer');
-            } else if (porcentagemEsquerda < 35) {
-                listrasDir.classList.add('modo-turbo');
-                barra.classList.add('tremer');
-                nomeEsq.classList.add('tremer');
-            }
+        // Limpeza de estados
+        [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
+        [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
+        _lE.style.opacity = _lD.style.opacity = "0";
 
-            progresso.style.width = porcentagemEsquerda + "%";
-            document.getElementById('txtEsquerda').innerText = viewsEsquerda.toLocaleString('pt-BR') + " views";
-            document.getElementById('txtDireita').innerText = viewsDireita.toLocaleString('pt-BR') + " views";
+        if (pE > 65) {
+            _lE.classList.add('modo-turbo');
+            _b.classList.add('tremer');
+            _nD.classList.add('tremer');
+        } else if (pE < 35) {
+            _lD.classList.add('modo-turbo');
+            _b.classList.add('tremer');
+            _nE.classList.add('tremer');
         }
 
-        async function buscarViews() {
-            try {
-                const res = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${todosIds}&key=${API_KEY}`);
-                const data = await res.json();
-                if (data.items) {
-                    let somaEsq = 0; let somaDir = 0;
-                    data.items.forEach(video => {
-                        const views = parseInt(video.statistics.viewCount);
-                        if (VIDEOS_ESQUERDA.includes(video.id)) somaEsq += views;
-                        else if (VIDEOS_DIREITA.includes(video.id)) somaDir += views;
-                    });
-                    viewsEsquerda = somaEsq; viewsDireita = somaDir;
-                    atualizarPlacar();
-                }
-            } catch (e) { 
-                if(viewsEsquerda === 0) { viewsEsquerda = 500000; viewsDireita = 500000; atualizarPlacar(); }
+        _p.style.width = pE + "%";
+        document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
+        document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
+    }
+
+    async function _fV() {
+        try {
+            const r = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${_all}&key=${_k}`);
+            const d = await r.json();
+            if (d.items) {
+                let s1 = 0; let s2 = 0;
+                d.items.forEach(v => {
+                    const c = parseInt(v.statistics.viewCount);
+                    if (_id1.includes(v.id)) s1 += c;
+                    else if (_id2.includes(v.id)) s2 += c;
+                });
+                _v1 = s1; _v2 = s2;
+                _uP();
             }
+        } catch (e) {
+            if(_v1 === 0) { _v1 = 500000; _v2 = 500000; _uP(); }
         }
+    }
 
-        document.addEventListener('keydown', (e) => {
-            const inc = 10000;
-            const key = e.key.toLowerCase();
-            if (key === 's') viewsEsquerda += inc;
-            if (key === 'p') viewsDireita += inc;
-            if (key === 'r') { viewsEsquerda = 0; viewsDireita = 0; }
-            atualizarPlacar();
-        });
+    document.addEventListener('keydown', (e) => {
+        const i = 10000;
+        const k = e.key.toLowerCase();
+        if (k === 's') _v1 += i;
+        if (k === 'p') _v2 += i;
+        if (k === 'r') { _v1 = 0; _v2 = 0; }
+        _uP();
+    });
 
-        buscarViews();
-        setInterval(buscarViews, 300000); 
-    </script>
+    _fV();
+    setInterval(_fV, 300000);
+</script>
 </body>
 </html>
