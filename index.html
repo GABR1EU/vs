@@ -41,30 +41,31 @@
                 background-image: url('TesteBriga.png');
                 background-size: contain;
             }
-            .container { margin-bottom: 20px; } /* Bar desce mais no PC */
-            .nome-personagem { font-size: 2.2rem; }
+            .container { margin-bottom: 25px; } 
+            .nome-personagem { font-size: 2.2rem; width: 48%; }
         }
 
         /* CONFIGURAÇÃO PARA CELULAR (MOBILE) */
         @media (max-width: 768px) {
             #placar-stage {
-                width: 90vw; /* Não ocupa a tela toda nas laterais */
-                aspect-ratio: 9 / 16; /* Proporção vertical */
+                width: 90vw;
+                aspect-ratio: 9 / 16; 
                 background-image: url('TesteBrigaMobile.png');
                 background-size: cover;
-                border-radius: 15px; /* Bordas arredondadinhas no mobile */
+                border-radius: 15px;
             }
             .container { 
                 width: 90%;
-                margin-bottom: 15px; /* Barra bem em baixo no mobile */
+                margin-bottom: 20px;
             }
-            .nome-personagem { font-size: 1.1rem; -webkit-text-stroke: 1px #000; }
-            .barra-container { height: 25px; border-width: 3px; }
+            .nome-personagem { font-size: 1.1rem; -webkit-text-stroke: 1px #000; width: 48%; }
+            .barra-container { height: 28px !important; border-width: 3px; }
             .views { font-size: 0.75rem; padding: 6px 12px; }
         }
 
-        /* --- ESTILOS GERAIS DA BARRA --- */
+        /* --- ESTILOS GERAIS DA BARRA (FIX DOS BUGS) --- */
         .container {
+            width: 90%; /* Garante que os elementos tenham espaço lateral para se afastar */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -73,9 +74,9 @@
 
         .nomes-container {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Empurra os nomes para as pontas */
             width: 100%;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .nome-personagem {
@@ -83,10 +84,12 @@
             text-transform: uppercase;
             -webkit-text-stroke: 1.5px #000;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+            text-align: center;
         }
 
         .barra-container {
             width: 100%; 
+            height: 35px; /* Devolve a altura da barra */
             background-color: var(--cor-direita);
             border: 4px solid #000;
             border-radius: 50px;
@@ -100,8 +103,9 @@
             width: 50%; 
             background-color: var(--cor-esquerda);
             transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            border-right: 3px solid #000;
+            border-right: 4px solid #000;
             position: relative;
+            z-index: 2;
         }
 
         .listras-esquerda, .listras-direita {
@@ -111,6 +115,7 @@
             background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent 100%);
             background-size: 30px 30px;
             opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
         .modo-turbo { opacity: 1 !important; animation: moveStripes 0.3s linear infinite !important; }
@@ -120,15 +125,17 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         .views {
             background: #1a1a1a;
             color: #fff;
+            padding: 8px 15px;
             border-radius: 8px;
             border: 2px solid #333;
             box-shadow: 0 3px 0px #000;
+            font-size: 1rem;
         }
     </style>
 </head>
@@ -168,7 +175,22 @@
     function _uP() {
         const t = (_v1 + _v2) || 1;
         const pE = (_v1 / t) * 100;
-        document.getElementById('barraProgresso').style.width = pE + "%";
+        
+        const _b = document.getElementById('barraVersus');
+        const _p = document.getElementById('barraProgresso');
+        const _lE = document.getElementById('listrasEsq');
+        const _lD = document.getElementById('listrasDir');
+
+        [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
+        _lE.style.opacity = _lD.style.opacity = "0";
+
+        if (pE > 65) {
+            _lE.classList.add('modo-turbo');
+        } else if (pE < 35) {
+            _lD.classList.add('modo-turbo');
+        }
+
+        _p.style.width = pE + "%";
         document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
         document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
     }
