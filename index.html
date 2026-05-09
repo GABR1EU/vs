@@ -12,9 +12,11 @@
 
         body {
             background-color: #fff;
-            background-image: url('image_744b92.png'); 
-            background-size: cover;
-            background-position: center;
+            /* --- TROCA DA IMAGEM AQUI --- */
+            background-image: url('TesteBriga.jpg'); 
+            /* ---------------------------- */
+            background-size: 100% auto; /* Garante que todos os personagens apareçam na largura */
+            background-position: top center;
             background-repeat: no-repeat;
             background-attachment: fixed;
             font-family: 'Arial Black', Gadget, sans-serif;
@@ -32,7 +34,7 @@
             width: 95%;
             max-width: 900px;
             text-align: center;
-            margin-bottom: 50px; 
+            margin-bottom: 40px; /* Ajustado para não cobrir as pernas dos personagens agachados */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -175,7 +177,7 @@
         }
 
         @media (max-width: 600px) {
-            .container { margin-bottom: 30px; }
+            .container { margin-bottom: 25px; }
             .nome-personagem { font-size: 1.1rem; }
             .barra-container { height: 26px; border-width: 3px; width: 100%; }
             .views { font-size: 0.8rem; padding: 6px 12px; border-width: 2px; }
@@ -212,7 +214,6 @@
     const _0x4f2a = ['QUl6YVN5RHJtZVlv d1dYQTBNR2Fwa1M0NWc5ZUhDX3prTVVMSmhZ', 'MEE3UEN3Vzhnc00=', 'Wm1RQUd0Nl95Qzg='];
     const _0x1b3c = (i) => atob(_0x4f2a[i].replace(/\s/g, ''));
 
-    // Variáveis com nomes não descritivos
     let _v1 = 0; 
     let _v2 = 0;
     const _k = _0x1b3c(0);
@@ -231,7 +232,6 @@
         const _nE = document.getElementById('nomeEsquerda');
         const _nD = document.getElementById('nomeDireita');
 
-        // Limpeza de estados
         [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
         [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
         _lE.style.opacity = _lD.style.opacity = "0";
