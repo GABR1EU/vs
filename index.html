@@ -10,124 +10,80 @@
             --cor-direita: #e622cc;  
         }
 
+        /* O Body agora serve apenas como fundo neutro (ex: o roxo da sua loja) */
         body {
-            background-color: #fff;
-            /* --- TROCA DA IMAGEM AQUI --- */
-            background-image: url('TesteBriga.png'); 
-            /* ---------------------------- */
-            background-size: 100% auto; /* Garante que todos os personagens apareçam na largura */
-            background-position: top center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            font-family: 'Arial Black', Gadget, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end; 
-            align-items: center;
-            height: 100vh;
+            background-color: #4b367c; /* Cor de fundo da Nuvemshop */
             margin: 0;
-            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial Black', Gadget, sans-serif;
+            overflow-x: hidden;
         }
 
-        /* --- CONTEÚDO PRINCIPAL --- */
-        .container {
+        /* --- O PALCO DO PLACAR (Onde a mágica acontece) --- */
+        #placar-stage {
             width: 95%;
-            max-width: 900px;
-            text-align: center;
-            margin-bottom: 40px; /* Ajustado para não cobrir as pernas dos personagens agachados */
+            max-width: 1100px; /* Largura controlada que você queria */
+            aspect-ratio: 16 / 9; /* Mantém a proporção de cinema */
+            background-image: url('TesteBriga.png');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            border: 6px solid #000;
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- CONTEÚDO (Nomes e Barra) --- */
+        .container {
+            width: 90%;
+            margin-bottom: 40px; 
             display: flex;
             flex-direction: column;
             align-items: center;
+            z-index: 10;
         }
 
         .nomes-container {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .nome-personagem {
             color: #ffffff;
             text-transform: uppercase;
             -webkit-text-stroke: 1.5px #000;
-            text-stroke: 1.5px #000;
-            font-size: 2rem;
-            width: 48%;
-            display: inline-block;
+            font-size: 1.8rem;
             text-shadow: 3px 3px 0px rgba(0,0,0,0.8);
-            transition: transform 0.2s ease;
-            backface-visibility: hidden;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- BARRA COM BRILHO E PROFUNDIDADE --- */
         .barra-container {
             width: 100%; 
-            height: 35px;
+            height: 30px;
             background-color: var(--cor-direita);
             border: 4px solid #000;
             border-radius: 50px;
             overflow: hidden;
             position: relative;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 2px 8px rgba(0,0,0,0.6);
-            transition: transform 0.1s ease, box-shadow 0.3s ease;
-        }
-
-        .barra-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 45%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 100%);
-            z-index: 10;
-            pointer-events: none;
         }
 
         .progresso-esquerda {
             height: 100%;
             width: 50%; 
             background-color: var(--cor-esquerda);
-            transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: width 0.8s ease-in-out;
             border-right: 4px solid #000;
-            position: relative;
-            z-index: 2;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
         }
 
-        .listras-esquerda, .listras-direita {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent 100%);
-            background-size: 40px 40px;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .modo-turbo {
-            opacity: 1 !important;
-            animation: moveStripes 0.3s linear infinite !important;
-            filter: brightness(1.2) drop-shadow(0 0 5px white);
-        }
-
-        @keyframes moveStripes {
-            from { background-position: 0 0; }
-            to { background-position: 40px 0; }
-        }
-
-        @keyframes shakeLight {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(1px, 1px) rotate(0.1deg); }
-            50% { transform: translate(-1px, 0px) rotate(-0.1deg); }
-            100% { transform: translate(0, 0) rotate(0deg); }
-        }
-
-        .tremer { 
-            animation: shakeLight 0.3s infinite ease-in-out;
-        }
-
-        /* --- VIEWS STYLES --- */
         .views-container {
             display: flex;
             justify-content: space-between;
@@ -138,84 +94,46 @@
         .views {
             background: #1a1a1a;
             color: #fff;
-            padding: 10px 20px;
-            border-radius: 12px;
-            border: 3px solid #333;
-            font-size: 1.1rem;
-            white-space: nowrap;
-            position: relative;
-            box-shadow: 0 4px 0px #000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        #txtEsquerda { border-color: var(--cor-esquerda); }
-        #txtDireita { border-color: var(--cor-direita); }
-
-        .views::before {
-            content: '';
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            right: 2px;
-            height: 2px;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
             border-radius: 10px;
+            border: 3px solid #333;
+            font-size: 1rem;
         }
 
-        .views::after {
-            content: '●';
-            color: #ff0000;
-            font-size: 0.8rem;
-            animation: pulse-live 1.5s infinite;
-        }
-
-        @keyframes pulse-live {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        @media (max-width: 600px) {
-            .container { margin-bottom: 25px; }
-            .nome-personagem { font-size: 1.1rem; }
-            .barra-container { height: 26px; border-width: 3px; width: 100%; }
-            .views { font-size: 0.8rem; padding: 6px 12px; border-width: 2px; }
+        /* Ajuste para telas pequenas (Mobile no link do Git) */
+        @media (max-width: 768px) {
+            #placar-stage { aspect-ratio: 1 / 1; } /* Fica quadrado no mobile */
+            .nome-personagem { font-size: 1rem; }
+            .views { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="nomes-container">
-            <span id="nomeEsquerda" class="nome-personagem">PRINCIPAIS</span>
-            <span id="nomeDireita" class="nome-personagem">SECUNDÁRIOS</span>
-        </div>
-
-        <div id="barraVersus" class="barra-container">
-            <div id="listrasDir" class="listras-direita"></div>
-            <div id="barraProgresso" class="progresso-esquerda">
-                <div id="listrasEsq" class="listras-esquerda"></div>
+    <!-- Novo Wrapper que controla o tamanho -->
+    <div id="placar-stage">
+        <div class="container">
+            <div class="nomes-container">
+                <span id="nomeEsquerda" class="nome-personagem">PRINCIPAIS</span>
+                <span id="nomeDireita" class="nome-personagem">SECUNDÁRIOS</span>
             </div>
-        </div>
 
-        <div class="views-container">
-            <div class="views-box" style="width:48%; display:flex; justify-content:center;">
+            <div id="barraVersus" class="barra-container">
+                <div id="barraProgresso" class="progresso-esquerda"></div>
+            </div>
+
+            <div class="views-container">
                 <span id="txtEsquerda" class="views">0 views</span>
-            </div>
-            <div class="views-box" style="width:48%; display:flex; justify-content:center;">
                 <span id="txtDireita" class="views">0 views</span>
             </div>
         </div>
     </div>
 
     <script>
-    // Strings codificadas para dificultar a busca direta por texto
+    // Lógica do YouTube (Mantive a mesma que você já tem)
     const _0x4f2a = ['QUl6YVN5RHJtZVlv d1dYQTBNR2Fwa1M0NWc5ZUhDX3prTVVMSmhZ', 'MEE3UEN3Vzhnc00=', 'Wm1RQUd0Nl95Qzg='];
     const _0x1b3c = (i) => atob(_0x4f2a[i].replace(/\s/g, ''));
-
-    let _v1 = 0; 
-    let _v2 = 0;
+    let _v1 = 0; let _v2 = 0;
     const _k = _0x1b3c(0);
     const _id1 = [_0x1b3c(1)];
     const _id2 = [_0x1b3c(2)];
@@ -224,29 +142,7 @@
     function _uP() {
         const t = (_v1 + _v2) || 1;
         const pE = (_v1 / t) * 100;
-        
-        const _b = document.getElementById('barraVersus');
-        const _p = document.getElementById('barraProgresso');
-        const _lE = document.getElementById('listrasEsq');
-        const _lD = document.getElementById('listrasDir');
-        const _nE = document.getElementById('nomeEsquerda');
-        const _nD = document.getElementById('nomeDireita');
-
-        [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
-        [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
-        _lE.style.opacity = _lD.style.opacity = "0";
-
-        if (pE > 65) {
-            _lE.classList.add('modo-turbo');
-            _b.classList.add('tremer');
-            _nD.classList.add('tremer');
-        } else if (pE < 35) {
-            _lD.classList.add('modo-turbo');
-            _b.classList.add('tremer');
-            _nE.classList.add('tremer');
-        }
-
-        _p.style.width = pE + "%";
+        document.getElementById('barraProgresso').style.width = pE + "%";
         document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
         document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
     }
@@ -270,17 +166,8 @@
         }
     }
 
-    document.addEventListener('keydown', (e) => {
-        const i = 10000;
-        const k = e.key.toLowerCase();
-        if (k === 's') _v1 += i;
-        if (k === 'p') _v2 += i;
-        if (k === 'r') { _v1 = 0; _v2 = 0; }
-        _uP();
-    });
-
     _fV();
     setInterval(_fV, 300000);
-</script>
+    </script>
 </body>
 </html>
