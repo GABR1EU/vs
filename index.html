@@ -45,6 +45,7 @@
         }
 
         /* CONFIGURAÇÃO MOBILE */
+       /* CONFIGURAÇÃO CELULAR (MOBILE) - AJUSTE DE FONTES */
         @media (max-width: 768px) {
             #placar-stage {
                 width: 90vw;
@@ -57,9 +58,22 @@
                 width: 90%;
                 margin-bottom: 20px;
             }
-            .nome-personagem { font-size: 1.1rem; -webkit-text-stroke: 1px #000; }
+            /* A MÁGICA DA FONTE MOBILE AQUI: */
+            .nome-personagem { 
+                font-family: 'Impact', 'Arial Black', sans-serif; /* Impact é mais alta e estreita, perfeita para celular */
+                font-size: 1.25rem; /* Um pouquinho maior */
+                letter-spacing: 0.5px; /* Dá um respiro entre as letras */
+                -webkit-text-stroke: 0.5px #000; /* Borda mais fina para não embolar a letra */
+                text-shadow: 2px 2px 0px rgba(0,0,0,0.9); /* Mantém o destaque com a sombra */
+                width: 48%; 
+            }
             .barra-container { height: 28px !important; }
-            .views { font-size: 0.75rem; padding: 6px 12px; }
+            .views { 
+                font-family: 'Arial', sans-serif; /* Fonte limpa pros números no mobile */
+                font-weight: bold;
+                font-size: 0.8rem; 
+                padding: 6px 12px; 
+            }
         }
 
         .container {
