@@ -45,36 +45,35 @@
             .nome-personagem { font-size: 2.2rem; }
         }
 
-        /* CONFIGURAÇÃO CELULAR (MOBILE) */
+        /* CONFIGURAÇÃO CELULAR (MOBILE) - FIX DA MARGEM */
         @media (max-width: 768px) {
             body { align-items: flex-start; } 
             #placar-stage {
                 width: 100% !important; 
-                height: 100vh;
-                aspect-ratio: auto; 
+                /* Trocado de 100vh para aspect-ratio para eliminar a margem roxa */
+                aspect-ratio: 9 / 16; 
                 background-image: url('TesteBrigaMobile.png');
                 background-size: 100% auto;
                 background-position: top center;
-                border-radius: 0;
-                padding-top: 20px; 
+                padding-top: 15px; 
             }
             .container { 
-                width: 95% !important; /* Espalha bem no mobile */
-                margin-bottom: 25px;
+                width: 95% !important;
+                margin-bottom: 20px; /* Ajuste para a barra não ficar colada no fim */
             }
             .nome-personagem { 
                 font-family: 'Impact', sans-serif; 
-                font-size: 1.1rem; 
+                font-size: 1.15rem; 
                 -webkit-text-stroke: 0.5px #000; 
                 width: 48%;
             }
-            .barra-container { height: 28px !important; }
-            .views { font-size: 0.8rem !important; padding: 6px 12px !important; }
+            .barra-container { height: 26px !important; }
+            .views { font-size: 0.8rem !important; padding: 6px 10px !important; }
         }
 
-        /* --- ESTILOS GERAIS (BUG CORRIGIDO AQUI) --- */
+        /* --- ESTILOS GERAIS --- */
         .container {
-            width: 90%; /* ISSO IMPEDE QUE OS NOMES E A BARRA GRUDEM NO MEIO */
+            width: 90%;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -85,7 +84,7 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .nome-personagem {
@@ -93,11 +92,10 @@
             text-transform: uppercase;
             -webkit-text-stroke: 1.5px #000;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
-            width: 48%; /* Dá metade da tela pra cada lado */
+            width: 48%;
             text-align: center;
         }
 
-        /* BARRA COM BRILHO E LISTRAS */
         .barra-container {
             width: 100%; 
             height: 38px;
@@ -139,7 +137,6 @@
             z-index: 6;
         }
 
-        /* ANIMAÇÕES */
         .modo-turbo { opacity: 1 !important; animation: moveStripes 0.3s linear infinite !important; }
         @keyframes moveStripes { from { background-position: 0 0; } to { background-position: 40px 0; } }
 
@@ -151,12 +148,11 @@
         }
         .tremer { animation: shake 0.2s infinite ease-in-out !important; }
 
-        /* VIEWS BOX */
         .views-container {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-top: 15px;
+            margin-top: 12px;
         }
 
         .views {
@@ -226,7 +222,6 @@
     function _uP() {
         const t = (_v1 + _v2) || 1;
         const pE = (_v1 / t) * 100;
-        
         const _b = document.getElementById('barraVersus');
         const _p = document.getElementById('barraProgresso');
         const _lE = document.getElementById('listrasEsq');
