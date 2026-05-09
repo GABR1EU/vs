@@ -15,7 +15,7 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            align-items: center; /* Centraliza no PC */
+            align-items: center; 
             min-height: 100vh;
             font-family: 'Arial Black', Gadget, sans-serif;
             overflow: hidden;
@@ -45,9 +45,9 @@
             .nome-personagem { font-size: 2.2rem; }
         }
 
-        /* CONFIGURAÇÃO CELULAR (MOBILE) - SEU CÓDIGO AQUI */
+        /* CONFIGURAÇÃO CELULAR (MOBILE) */
         @media (max-width: 768px) {
-            body { align-items: flex-start; } /* Placar começa no topo */
+            body { align-items: flex-start; } 
             #placar-stage {
                 width: 100% !important; 
                 height: 100vh;
@@ -56,10 +56,10 @@
                 background-size: 100% auto;
                 background-position: top center;
                 border-radius: 0;
-                padding-top: 20px; /* Protege as cabeças no topo */
+                padding-top: 20px; 
             }
             .container { 
-                width: 95%;
+                width: 95% !important; /* Espalha bem no mobile */
                 margin-bottom: 25px;
             }
             .nome-personagem { 
@@ -72,8 +72,9 @@
             .views { font-size: 0.8rem !important; padding: 6px 12px !important; }
         }
 
-        /* --- ESTILOS GERAIS --- */
+        /* --- ESTILOS GERAIS (BUG CORRIGIDO AQUI) --- */
         .container {
+            width: 90%; /* ISSO IMPEDE QUE OS NOMES E A BARRA GRUDEM NO MEIO */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -92,6 +93,7 @@
             text-transform: uppercase;
             -webkit-text-stroke: 1.5px #000;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+            width: 48%; /* Dá metade da tela pra cada lado */
             text-align: center;
         }
 
@@ -167,6 +169,7 @@
             font-size: 1.1rem;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
             position: relative;
         }
@@ -212,7 +215,6 @@
     </div>
 
     <script>
-    // INTELIGÊNCIA YOUTUBE API
     const _0x4f2a = ['QUl6YVN5RHJtZVlv d1dYQTBNR2Fwa1M0NWc5ZUhDX3prTVVMSmhZ', 'MEE3UEN3Vzhnc00=', 'Wm1RQUd0Nl95Qzg='];
     const _0x1b3c = (i) => atob(_0x4f2a[i].replace(/\s/g, ''));
     let _v1 = 0; let _v2 = 0;
