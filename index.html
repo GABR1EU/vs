@@ -21,10 +21,11 @@
             overflow: hidden;
         }
 
-        /* --- PALCO DO PLACAR (Sem bordas e sombras extras) --- */
+        /* --- PALCO DO PLACAR --- */
         #placar-stage {
             width: 100%;
-            max-width: 1100px;
+            /* AJUSTE: Aumentado de 1100px para 1300px para ficar maior */
+            max-width: 1300px; 
             aspect-ratio: 16 / 9;
             background-image: url('TesteBriga.png');
             background-size: contain;
@@ -39,7 +40,8 @@
 
         .container {
             width: 90%;
-            margin-bottom: 50px; 
+            /* AJUSTE: Diminuído para 20px para a barra descer mais */
+            margin-bottom: 20px; 
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -58,10 +60,9 @@
             -webkit-text-stroke: 1.5px #000;
             font-size: 2.2rem;
             text-shadow: 3px 3px 0px rgba(0,0,0,0.8);
-            transition: transform 0.2s ease;
         }
 
-        /* --- BARRA COM ANIMAÇÕES E BRILHO --- */
+        /* --- BARRA COM ANIMAÇÕES --- */
         .barra-container {
             width: 100%; 
             height: 35px;
@@ -73,7 +74,6 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.5), inset 0 2px 8px rgba(0,0,0,0.6);
         }
 
-        /* Brilho/Reflexo superior da barra */
         .barra-container::before {
             content: '';
             position: absolute;
@@ -81,7 +81,6 @@
             height: 45%;
             background: linear-gradient(to bottom, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.05) 100%);
             z-index: 10;
-            pointer-events: none;
         }
 
         .progresso-esquerda {
@@ -104,7 +103,6 @@
             transition: opacity 0.5s ease;
         }
 
-        /* Animações Turbo e Tremer */
         .modo-turbo {
             opacity: 1 !important;
             animation: moveStripes 0.3s linear infinite !important;
@@ -124,7 +122,6 @@
 
         .tremer { animation: shakeLight 0.3s infinite ease-in-out; }
 
-        /* --- VIEWS --- */
         .views-container {
             display: flex;
             justify-content: space-between;
@@ -140,26 +137,11 @@
             border: 3px solid #333;
             font-size: 1.1rem;
             box-shadow: 0 4px 0px #000;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .views::after {
-            content: '●';
-            color: #ff0000;
-            font-size: 0.8rem;
-            animation: pulse-live 1.5s infinite;
-        }
-
-        @keyframes pulse-live {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
         }
 
         @media (max-width: 768px) {
             .nome-personagem { font-size: 1.2rem; }
-            .views { font-size: 0.8rem; padding: 6px 12px; }
+            .views { font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -187,6 +169,7 @@
     </div>
 
     <script>
+    // Lógica do YouTube mantida conforme seu projeto original
     const _0x4f2a = ['QUl6YVN5RHJtZVlv d1dYQTBNR2Fwa1M0NWc5ZUhDX3prTVVMSmhZ', 'MEE3UEN3Vzhnc00=', 'Wm1RQUd0Nl95Qzg='];
     const _0x1b3c = (i) => atob(_0x4f2a[i].replace(/\s/g, ''));
     let _v1 = 0; let _v2 = 0;
@@ -206,12 +189,10 @@
         const _nE = document.getElementById('nomeEsquerda');
         const _nD = document.getElementById('nomeDireita');
 
-        // Reset de estados
         [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
         [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
         _lE.style.opacity = _lD.style.opacity = "0";
 
-        // Aplica animações conforme a porcentagem
         if (pE > 65) {
             _lE.classList.add('modo-turbo');
             _b.classList.add('tremer');
@@ -248,6 +229,6 @@
 
     _fV();
     setInterval(_fV, 300000);
-    </script>
+</script>
 </body>
 </html>
