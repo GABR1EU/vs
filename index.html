@@ -32,7 +32,7 @@
             background-position: top center;
         }
 
-        /* PC (DESKTOP) */
+        /* CONFIGURAÇÃO DESKTOP */
         @media (min-width: 769px) {
             #placar-stage {
                 max-width: 1300px; 
@@ -44,7 +44,7 @@
             .nome-personagem { font-size: 2.2rem; }
         }
 
-        /* CELULAR (MOBILE) */
+        /* CONFIGURAÇÃO MOBILE */
         @media (max-width: 768px) {
             #placar-stage {
                 width: 90vw;
@@ -62,7 +62,6 @@
             .views { font-size: 0.75rem; padding: 6px 12px; }
         }
 
-        /* --- FIX DO BRILHO E ESTRUTURA --- */
         .container {
             width: 90%;
             display: flex;
@@ -85,11 +84,13 @@
             text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
             width: 48%;
             text-align: center;
+            transition: transform 0.2s ease;
         }
 
+        /* --- BARRA COM TUDO: BRILHO, LISTRAS E TREMIDO --- */
         .barra-container {
             width: 100%; 
-            height: 38px; /* Um pouco mais alta para o brilho aparecer bem */
+            height: 38px;
             background-color: var(--cor-direita);
             border: 4px solid #000;
             border-radius: 50px;
@@ -98,14 +99,14 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.4), inset 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* O BRILHO (REFLEXO VIDRADO) */
+        /* O Brilho Vidrado (z-index alto para ficar por cima) */
         .barra-container::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 50%;
             background: linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 100%);
-            z-index: 20; /* Garante que o brilho fique sobre as listras */
+            z-index: 20;
             pointer-events: none;
         }
 
@@ -129,13 +130,25 @@
             z-index: 6;
         }
 
+        /* ANIMAÇÕES */
         .modo-turbo { 
             opacity: 1 !important; 
             animation: moveStripes 0.3s linear infinite !important;
-            filter: brightness(1.1); /* Dá um leve "glow" extra */
         }
 
         @keyframes moveStripes { from { background-position: 0 0; } to { background-position: 40px 0; } }
+
+        /* O EFEITO DE TREMER (SHAKE) */
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(1px, 1px) rotate(0.1deg); }
+            50% { transform: translate(-1px, 0px) rotate(-0.1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        .tremer { 
+            animation: shake 0.2s infinite ease-in-out !important; 
+        }
 
         .views-container {
             display: flex;
@@ -190,15 +203,30 @@
     function _uP() {
         const t = (_v1 + _v2) || 1;
         const pE = (_v1 / t) * 100;
+        
+        const _b = document.getElementById('barraVersus');
         const _p = document.getElementById('barraProgresso');
         const _lE = document.getElementById('listrasEsq');
         const _lD = document.getElementById('listrasDir');
+        const _nE = document.getElementById('nomeEsquerda');
+        const _nD = document.getElementById('nomeDireita');
 
+        // Reset de classes
         [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
+        [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
         _lE.style.opacity = _lD.style.opacity = "0";
 
-        if (pE > 65) { _lE.classList.add('modo-turbo'); } 
-        else if (pE < 35) { _lD.classList.add('modo-turbo'); }
+        // Lógica de animação por tensão
+        if (pE > 65) { 
+            _lE.classList.add('modo-turbo'); 
+            _b.classList.add('tremer');
+            _nD.classList.add('tremer'); // Secundários tremem de medo
+        } 
+        else if (pE < 35) { 
+            _lD.classList.add('modo-turbo'); 
+            _b.classList.add('tremer');
+            _nE.classList.add('tremer'); // Principais tremem de medo
+        }
 
         _p.style.width = pE + "%";
         document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
