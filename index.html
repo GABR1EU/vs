@@ -21,7 +21,6 @@
             overflow: hidden;
         }
 
-        /* --- PALCO DO PLACAR --- */
         #placar-stage {
             width: 100%;
             display: flex;
@@ -33,7 +32,7 @@
             background-position: top center;
         }
 
-        /* CONFIGURAÇÃO DESKTOP (PC) */
+        /* CONFIGURAÇÃO DESKTOP */
         @media (min-width: 769px) {
             #placar-stage {
                 max-width: 1300px; 
@@ -45,7 +44,7 @@
             .nome-personagem { font-size: 2.2rem; }
         }
 
-        /* CONFIGURAÇÃO CELULAR (MOBILE) - FIX DO APAGÃO DE FONTE AQUI */
+        /* CONFIGURAÇÃO MOBILE */
         @media (max-width: 768px) {
             body { align-items: flex-start; } 
             #placar-stage {
@@ -54,34 +53,24 @@
                 background-image: url('TesteBrigaMobile.png');
                 background-size: 100% auto;
                 background-position: top center;
-                border-radius: 0;
                 padding-top: 20px; 
             }
-            .container { 
-                width: 95% !important;
-                margin-bottom: 25px;
-            }
-            /* A MÁGICA: Fonte Grossa, Branca e com Borda Preta Visível */
+            .container { width: 95% !important; margin-bottom: 25px; }
             .nome-personagem { 
-                font-family: 'Impact', 'Arial Black', sans-serif !important; 
+                font-family: 'Impact', sans-serif !important; 
                 font-size: 1.2rem !important; 
-                font-weight: 900 !important; /* Força a grossura máxima */
-                color: #ffffff !important; /* Força branco no mobile */
-                -webkit-text-stroke: 1.5px #000 !important; /* Borda preta de 1.5px (visível) */
-                text-shadow: 2px 2px 5px rgba(0,0,0,1) !important; /* Sombra forte */
+                font-weight: 900 !important;
+                color: #ffffff !important; 
+                -webkit-text-stroke: 1.5px #000 !important;
+                text-shadow: 2px 2px 5px rgba(0,0,0,1) !important;
                 width: 48%;
                 text-align: center;
-                display: block !important; /* Garante que os nomes não colapsam */
+                display: block !important;
             }
             .barra-container { height: 28px !important; }
-            .views { 
-                font-size: 0.8rem !important; 
-                padding: 6px 12px !important; 
-                color: #fff !important; 
-            }
+            .views { font-size: 0.8rem !important; padding: 6px 12px !important; color: #fff !important; }
         }
 
-        /* --- ESTILOS GERAIS --- */
         .container {
             width: 90%; 
             display: flex;
@@ -100,16 +89,14 @@
         .nome-personagem {
             color: #ffffff;
             text-transform: uppercase;
-            -webkit-text-stroke: 1px #000;
+            -webkit-text-stroke: 1.5px #000;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
             width: 48%; 
             text-align: center;
         }
 
-        /* BARRA VERSUS */
         .barra-container {
-            width: 100%; 
-            height: 38px;
+            width: 100%; height: 38px;
             background-color: var(--cor-direita);
             border: 4px solid #000;
             border-radius: 50px;
@@ -119,36 +106,23 @@
         }
 
         .barra-container::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 50%;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
             background: linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 100%);
-            z-index: 20;
-            pointer-events: none;
+            z-index: 20; pointer-events: none;
         }
 
         .progresso-esquerda {
-            height: 100%;
-            width: 50%; 
-            background-color: var(--cor-esquerda);
+            height: 100%; width: 50%; background-color: var(--cor-esquerda);
             transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            border-right: 4px solid #000;
-            position: relative;
-            z-index: 5;
+            border-right: 4px solid #000; position: relative; z-index: 5;
         }
 
         .listras-esquerda, .listras-direita {
-            position: absolute;
-            width: 100%;
-            height: 100%;
+            position: absolute; width: 100%; height: 100%;
             background: linear-gradient(45deg, rgba(255,255,255,0.25) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.25) 50%, rgba(255,255,255,0.25) 75%, transparent 75%, transparent 100%);
-            background-size: 40px 40px;
-            opacity: 0;
-            z-index: 6;
+            background-size: 40px 40px; opacity: 0; z-index: 6;
         }
 
-        /* ANIMAÇÕES */
         .modo-turbo { opacity: 1 !important; animation: moveStripes 0.3s linear infinite !important; }
         @keyframes moveStripes { from { background-position: 0 0; } to { background-position: 40px 0; } }
 
@@ -160,39 +134,19 @@
         }
         .tremer { animation: shake 0.2s infinite ease-in-out !important; }
 
-        /* VIEWS BOX */
-        .views-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 15px;
-        }
+        .views-container { display: flex; justify-content: space-between; width: 100%; margin-top: 15px; }
 
         .views {
-            background: #1a1a1a;
-            color: #fff;
-            padding: 8px 18px;
-            border-radius: 10px;
-            border: 3px solid #333;
-            box-shadow: 0 4px 0px #000;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            position: relative;
+            background: #1a1a1a; color: #fff !important;
+            padding: 8px 18px; border-radius: 10px; border: 3px solid #333;
+            box-shadow: 0 4px 0px #000; font-size: 1.1rem;
+            display: flex; align-items: center; justify-content: center; gap: 8px; position: relative;
         }
 
         #txtEsquerda { border-color: var(--cor-esquerda); }
         #txtDireita { border-color: var(--cor-direita); }
 
-        .views::after {
-            content: '●';
-            color: #ff0000;
-            font-size: 0.8rem;
-            animation: pulse-live 1.5s infinite;
-        }
-
+        .views::after { content: '●'; color: #ff0000; font-size: 0.8rem; animation: pulse-live 1.5s infinite; }
         @keyframes pulse-live { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
@@ -224,12 +178,10 @@
     </div>
 
     <script>
-    // --- CONFIGURAÇÃO DA API (FUNCIONANDO) ---
     const CONFIG = {
-        // Mantenha essa chave limpa, sem atob, para evitar erros.
         k: 'AIzaSyDrmeYogWXA0MGapkS45g9eHC_zkMULJhY', 
-        principais: [''],
-        secundarios: ['']
+        principais: [], // LISTA VAZIA = 0
+        secundarios: [] // LISTA VAZIA = 0
     };
 
     let _v1 = 0; let _v2 = 0;
@@ -248,20 +200,21 @@
         const _nE = document.getElementById('nomeEsquerda');
         const _nD = document.getElementById('nomeDireita');
 
-        // Limpa estados
         [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
         [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
         _lE.style.opacity = _lD.style.opacity = "0";
 
-        // Tensão
-        if (pE > 65) { 
-            _lE.classList.add('modo-turbo'); 
-            _b.classList.add('tremer');
-            _nD.classList.add('tremer');
-        } else if (pE < 35) { 
-            _lD.classList.add('modo-turbo'); 
-            _b.classList.add('tremer');
-            _nE.classList.add('tremer');
+        // Só treme ou ativa turbo se houver algum valor no placar
+        if ((_v1 + _v2) > 0) {
+            if (pE > 65) { 
+                _lE.classList.add('modo-turbo'); 
+                _b.classList.add('tremer');
+                _nD.classList.add('tremer');
+            } else if (pE < 35) { 
+                _lD.classList.add('modo-turbo'); 
+                _b.classList.add('tremer');
+                _nE.classList.add('tremer');
+            }
         }
 
         _p.style.width = pE + "%";
@@ -270,18 +223,19 @@
     }
 
     async function _fV() {
+        // --- LÓGICA DE RESET ---
+        // Se as duas listas estiverem vazias, zera o placar e para aqui.
+        if (_id1.length === 0 && _id2.length === 0) {
+            _v1 = 0; _v2 = 0;
+            _uP();
+            return;
+        }
+
         try {
             const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${_all}&key=${CONFIG.k}`;
             const r = await fetch(url);
             const d = await r.json();
             
-            if (d.error) {
-                console.error("Erro na API:", d.error.message);
-                // Fallback visual para não ficar zerado em caso de erro da API
-                _v1 = 910569; _v2 = 280971; _uP();
-                return;
-            }
-
             if (d.items) {
                 let s1 = 0; let s2 = 0;
                 d.items.forEach(v => {
@@ -293,12 +247,12 @@
                 _uP();
             }
         } catch (e) {
-            console.error("Falha na conexão:", e);
+            console.error("Erro na busca:", e);
         }
     }
 
     _fV();
-    setInterval(_fV, 60000); // Atualiza a cada 1 minuto
+    setInterval(_fV, 60000); 
 </script>
 </body>
 </html>
