@@ -16,8 +16,7 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            /* REMOVIDO: align-items: center e min-height: 100vh para tirar as margens */
-            align-items: flex-start; 
+            align-items: flex-start; /* Mantém colado no topo */
             min-height: auto; 
             font-family: 'Arial Black', Gadget, sans-serif;
             overflow: hidden;
@@ -27,7 +26,6 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            /* Garante que o conteúdo fique colado na base da imagem de fundo */
             justify-content: flex-end; 
             align-items: center;
             position: relative;
@@ -36,68 +34,255 @@
             margin: 0;
         }
 
-        /* CONFIGURAÇÃO DESKTOP */
+        /* CONFIGURAÇÃO DESKTOP (PC) */
         @media (min-width: 769px) {
             #placar-stage {
                 max-width: 1300px; 
                 aspect-ratio: 16 / 9;
-                background-image: url('TesteBriga.png');
+                background-image: url('ImagemDesktop.png');
                 background-size: contain;
             }
-            /* Reduzi a margem inferior do container para subir o placar */
-            .container { margin-bottom: 10px; } 
+            .container { margin-bottom: 25px; } 
             .nome-personagem { font-size: 2.2rem; }
         }
 
-        /* CONFIGURAÇÃO MOBILE */
+        /* CONFIGURAÇÃO CELULAR (MOBILE) */
         @media (max-width: 768px) {
             #placar-stage {
                 width: 100% !important; 
                 aspect-ratio: 9 / 16; 
-                background-image: url('ImagemMobile.png');
+                background-image: url('TesteBrigaMobile.png');
                 background-size: 100% auto;
                 padding-top: 10px; 
             }
-            .container { width: 95% !important; margin-bottom: 15px; }
+            .container { width: 95% !important; margin-bottom: 25px; }
             .nome-personagem { 
                 font-family: 'Impact', sans-serif !important; 
                 font-size: 1.3rem !important; 
+                font-weight: 900 !important;
+                color: #ffffff !important; 
                 -webkit-text-stroke: 1.8px #000 !important;
                 text-shadow: 3px 3px 6px rgba(0,0,0,1) !important;
             }
+            .barra-container { height: 28px !important; }
+            .views { font-size: 0.8rem !important; padding: 6px 12px !important; color: #fff !important; }
         }
 
-        /* ... RESTANTE DO SEU CSS (Mantenha igual) ... */
-        .container { width: 90%; display: flex; flex-direction: column; align-items: center; z-index: 10; }
-        .nomes-container { display: flex; justify-content: space-between; width: 100%; margin-bottom: 8px; }
-        .nome-personagem { color: #ffffff; text-transform: uppercase; -webkit-text-stroke: 1.5px #000; text-shadow: 2px 2px 0px rgba(0,0,0,0.8); width: 48%; text-align: center; }
-        .barra-container { width: 100%; height: 38px; background-color: var(--cor-direita); border: 4px solid #000; border-radius: 50px; overflow: hidden; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.4); }
-        .progresso-esquerda { height: 100%; width: 50%; background-color: var(--cor-esquerda); transition: width 0.8s ease; border-right: 4px solid #000; position: relative; z-index: 5; }
-        .views-container { display: flex; justify-content: space-between; width: 100%; margin-top: 15px; }
-        .views { background: #1a1a1a; color: #fff !important; padding: 8px 18px; border-radius: 10px; border: 3px solid #333; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        /* --- ESTILOS DO CONTAINER --- */
+        .container {
+            width: 90%; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nomes-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 8px;
+        }
+
+        .nome-personagem {
+            color: #ffffff;
+            text-transform: uppercase;
+            -webkit-text-stroke: 1.5px #000;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.8);
+            width: 48%; 
+            text-align: center;
+        }
+
+        /* --- BARRA COM BRILHOS E LISTRAS (RESTAURADO) --- */
+        .barra-container {
+            width: 100%; 
+            height: 38px;
+            background-color: var(--cor-direita);
+            border: 4px solid #000;
+            border-radius: 50px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.4), inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* O brilho superior da barra */
+        .barra-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 100%);
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .progresso-esquerda {
+            height: 100%;
+            width: 50%; 
+            background-color: var(--cor-esquerda);
+            transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            border-right: 4px solid #000;
+            position: relative;
+            z-index: 5;
+        }
+
+        /* Listras animadas */
+        .listras-esquerda, .listras-direita {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent 100%);
+            background-size: 40px 40px;
+            opacity: 1; /* Deixei visível por padrão, o JS ativa a animação */
+            z-index: 6;
+        }
+
+        /* ANIMAÇÕES */
+        .modo-turbo { animation: moveStripes 0.6s linear infinite !important; }
+        @keyframes moveStripes { from { background-position: 0 0; } to { background-position: 40px 0; } }
+
+        @keyframes shake {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(1px, 1px) rotate(0.1deg); }
+            50% { transform: translate(-1px, 0px) rotate(-0.1deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .tremer { animation: shake 0.2s infinite ease-in-out !important; }
+
+        /* --- VIEWS BOX --- */
+        .views-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .views {
+            background: #1a1a1a;
+            color: #fff !important;
+            padding: 8px 18px;
+            border-radius: 10px;
+            border: 3px solid #333;
+            box-shadow: 0 4px 0px #000;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+        }
+
         #txtEsquerda { border-color: var(--cor-esquerda); }
         #txtDireita { border-color: var(--cor-direita); }
+
+        /* Ponto vermelho do "Live" */
+        .views::after {
+            content: '●';
+            color: #ff0000;
+            font-size: 0.8rem;
+            animation: pulse-live 1.5s infinite;
+        }
+
+        @keyframes pulse-live { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
+
     <div id="placar-stage">
         <div class="container">
             <div class="nomes-container">
                 <span id="nomeEsquerda" class="nome-personagem">PRINCIPAIS</span>
                 <span id="nomeDireita" class="nome-personagem">SECUNDÁRIOS</span>
             </div>
+
             <div id="barraVersus" class="barra-container">
-                <div id="barraProgresso" class="progresso-esquerda"></div>
+                <div id="listrasDir" class="listras-direita"></div>
+                <div id="barraProgresso" class="progresso-esquerda">
+                    <div id="listrasEsq" class="listras-esquerda"></div>
+                </div>
             </div>
+
             <div class="views-container">
-                <div style="width:48%; display:flex; justify-content:center;"><span id="txtEsquerda" class="views">0 views</span></div>
-                <div style="width:48%; display:flex; justify-content:center;"><span id="txtDireita" class="views">0 views</span></div>
+                <div style="width:48%; display:flex; justify-content:center;">
+                    <span id="txtEsquerda" class="views">0 views</span>
+                </div>
+                <div style="width:48%; display:flex; justify-content:center;">
+                    <span id="txtDireita" class="views">0 views</span>
+                </div>
             </div>
         </div>
     </div>
-    
+
     <script>
-        // O seu código CONFIG e a função _fV() continuam aqui...
+    const CONFIG = {
+        k: 'AIzaSyBjm4rr7njSItTjF_v8FQxMZJVy3xaGjHs', 
+        principais: ['7Yoh-DnNktA'], 
+        secundarios: [] 
+    };
+
+    let _v1 = 0; let _v2 = 0;
+    const _id1 = CONFIG.principais;
+    const _id2 = CONFIG.secundarios;
+    const _all = [..._id1, ..._id2].join(',');
+
+    function _uP() {
+        const t = (_v1 + _v2) || 1;
+        const pE = (_v1 / t) * 100;
+        
+        const _b = document.getElementById('barraVersus');
+        const _p = document.getElementById('barraProgresso');
+        const _lE = document.getElementById('listrasEsq');
+        const _lD = document.getElementById('listrasDir');
+        const _nE = document.getElementById('nomeEsquerda');
+        const _nD = document.getElementById('nomeDireita');
+
+        // Limpa estados de animação
+        [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
+        [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
+
+        // Ativa efeitos se houver disputa
+        if ((_v1 + _v2) > 0) {
+            if (pE > 65) { 
+                _lE.classList.add('modo-turbo'); 
+                _b.classList.add('tremer');
+                _nD.classList.add('tremer');
+            } else if (pE < 35) { 
+                _lD.classList.add('modo-turbo'); 
+                _b.classList.add('tremer');
+                _nE.classList.add('tremer');
+            }
+        }
+
+        _p.style.width = pE + "%";
+        document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
+        document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
+    }
+
+    async function _fV() {
+        if (_id1.length === 0 && _id2.length === 0) { _v1 = 0; _v2 = 0; _uP(); return; }
+
+        try {
+            const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${_all}&key=${CONFIG.k}`;
+            const r = await fetch(url);
+            const d = await r.json();
+            
+            if (d.items) {
+                let s1 = 0; let s2 = 0;
+                d.items.forEach(v => {
+                    const c = parseInt(v.statistics.viewCount);
+                    if (_id1.includes(v.id)) s1 += c;
+                    else if (_id2.includes(v.id)) s2 += c;
+                });
+                _v1 = s1; _v2 = s2;
+                _uP();
+            }
+        } catch (e) {
+            console.error("Erro na busca:", e);
+        }
+    }
+
+    _fV();
+    setInterval(_fV, 60000); 
     </script>
 </body>
 </html>
