@@ -44,7 +44,7 @@
             .nome-personagem { font-size: 2.2rem; }
         }
 
-        /* CONFIGURAÇÃO MOBILE */
+        /* CONFIGURAÇÃO MOBILE - FONTE REFORÇADA */
         @media (max-width: 768px) {
             body { align-items: flex-start; } 
             #placar-stage {
@@ -57,12 +57,12 @@
             }
             .container { width: 95% !important; margin-bottom: 25px; }
             .nome-personagem { 
-                font-family: 'Impact', sans-serif !important; 
-                font-size: 1.2rem !important; 
+                font-family: 'Impact', 'Arial Black', sans-serif !important; 
+                font-size: 1.3rem !important; 
                 font-weight: 900 !important;
                 color: #ffffff !important; 
-                -webkit-text-stroke: 1.5px #000 !important;
-                text-shadow: 2px 2px 5px rgba(0,0,0,1) !important;
+                -webkit-text-stroke: 1.8px #000 !important; /* Borda bem visível */
+                text-shadow: 3px 3px 6px rgba(0,0,0,1) !important;
                 width: 48%;
                 text-align: center;
                 display: block !important;
@@ -180,8 +180,8 @@
     <script>
     const CONFIG = {
         k: 'AIzaSyBjm4rr7njSItTjF_v8FQxMZJVy3xaGjHs', 
-        principais: ['7Yoh-DnNktA'], // LISTA VAZIA = 0
-        secundarios: [] // LISTA VAZIA = 0
+        principais: ['7Yoh-DnNktA'], 
+        secundarios: [] 
     };
 
     let _v1 = 0; let _v2 = 0;
@@ -202,18 +202,13 @@
 
         [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
         [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
-        _lE.style.opacity = _lD.style.opacity = "0";
+        if(_lE) _lE.style.opacity = _lD.style.opacity = "0";
 
-        // Só treme ou ativa turbo se houver algum valor no placar
         if ((_v1 + _v2) > 0) {
             if (pE > 65) { 
-                _lE.classList.add('modo-turbo'); 
-                _b.classList.add('tremer');
-                _nD.classList.add('tremer');
+                _lE.classList.add('modo-turbo'); _b.classList.add('tremer'); _nD.classList.add('tremer');
             } else if (pE < 35) { 
-                _lD.classList.add('modo-turbo'); 
-                _b.classList.add('tremer');
-                _nE.classList.add('tremer');
+                _lD.classList.add('modo-turbo'); _b.classList.add('tremer'); _nE.classList.add('tremer');
             }
         }
 
@@ -223,19 +218,18 @@
     }
 
     async function _fV() {
-        // --- LÓGICA DE RESET ---
-        // Se as duas listas estiverem vazias, zera o placar e para aqui.
-        if (_id1.length === 0 && _id2.length === 0) {
-            _v1 = 0; _v2 = 0;
-            _uP();
-            return;
-        }
+        if (_id1.length === 0 && _id2.length === 0) { _v1 = 0; _v2 = 0; _uP(); return; }
 
         try {
             const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${_all}&key=${CONFIG.k}`;
             const r = await fetch(url);
             const d = await r.json();
             
+            if (d.error) {
+                console.error("ERRO GOOGLE:", d.error.message);
+                return;
+            }
+
             if (d.items) {
                 let s1 = 0; let s2 = 0;
                 d.items.forEach(v => {
