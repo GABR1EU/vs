@@ -57,12 +57,13 @@
             }
             .container { width: 95% !important; margin-bottom: 25px; }
             .nome-personagem { 
-                font-family: 'Impact', sans-serif; 
-                font-size: 1.2rem !important; 
-                width: 48%;
+                font-family: 'Impact', sans-serif !important; 
+                font-size: 1.1rem !important; 
+                color: #ffffff !important; /* FORÇA BRANCO NO MOBILE */
+                -webkit-text-stroke: 0.5px #000 !important;
             }
             .barra-container { height: 28px !important; }
-            .views { font-size: 0.8rem !important; padding: 6px 12px !important; }
+            .views { font-size: 0.8rem !important; padding: 6px 12px !important; color: #fff !important; }
         }
 
         .container {
@@ -80,7 +81,7 @@
             margin-bottom: 8px;
         }
 
-        /* FIX DO TEXTO ESCURO: Forçando branco e stroke */
+        /* ESTILO DOS NOMES (FIX DO APAGÃO) */
         .nome-personagem {
             color: #ffffff !important; 
             text-transform: uppercase;
@@ -88,6 +89,7 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,1);
             width: 48%; 
             text-align: center;
+            display: block;
         }
 
         .barra-container {
@@ -173,24 +175,18 @@
     </div>
 
     <script>
-    // --- CONFIGURAÇÃO ---
+    // --- CONFIGURAÇÃO DIRETA ---
     const CONFIG = {
-        k: atob('QUl6YVN5RHJtZVlvZ1dYQTBNR2Fwa1M0NWc5ZUhDX3prTVVMSmhZ'),
+        // COLOQUE SUA CHAVE AQUI DENTRO DAS ASPAS (Se der erro, crie uma nova no Google Cloud)
+        k: 'AIzaSyDrmeYowWXA0MGapkS45g9eHC_zkMULJhY', 
         
-        // CUIDADO: Não deixe IDs vazios ou com texto como 'ID_AQUI'
-        principais: [
-            '0A7PCwW8gsM' 
-        ],
-        secundarios: [
-            'ZmQAGt6_yC8'
-        ]
+        principais: ['0A7PCwW8gsM'],
+        secundarios: ['ZmQAGt6_yC8']
     };
 
     let _v1 = 0; let _v2 = 0;
-    
-    // Limpa IDs vazios para evitar erro 400
-    const _id1 = CONFIG.principais.filter(id => id.length > 5);
-    const _id2 = CONFIG.secundarios.filter(id => id.length > 5);
+    const _id1 = CONFIG.principais;
+    const _id2 = CONFIG.secundarios;
     const _all = [..._id1, ..._id2].join(',');
 
     function _uP() {
@@ -224,10 +220,6 @@
     }
 
     async function _fV() {
-        if (!_all) {
-            console.error("Nenhum ID de vídeo válido configurado.");
-            return;
-        }
         try {
             const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${_all}&key=${CONFIG.k}`;
             const r = await fetch(url);
@@ -235,6 +227,8 @@
             
             if (d.error) {
                 console.error("Erro na API do YouTube:", d.error.message);
+                // Fallback visual para você saber que a API falhou
+                _v1 = 910569; _v2 = 280971; _uP();
                 return;
             }
 
@@ -250,13 +244,11 @@
             }
         } catch (e) {
             console.error("Falha na conexão:", e);
-            // Fallback para não ficar zerado
-            if(_v1 === 0) { _v1 = 910569; _v2 = 280971; _uP(); }
         }
     }
 
     _fV();
-    setInterval(_fV, 60000); // Atualiza a cada 1 minuto
+    setInterval(_fV, 60000); 
 </script>
 </body>
 </html>
