@@ -16,7 +16,7 @@
             padding: 0;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Mantém colado no topo */
+            align-items: flex-start;
             min-height: auto; 
             font-family: 'Arial Black', Gadget, sans-serif;
             overflow: hidden;
@@ -34,11 +34,12 @@
             margin: 0;
         }
 
-        /* CONFIGURAÇÃO DESKTOP (PC) */
+        /* CONFIGURAÇÃO DESKTOP (Ajustado para 2200x1500) */
         @media (min-width: 769px) {
             #placar-stage {
                 max-width: 1300px; 
-                aspect-ratio: 16 / 9;
+                /* Proporção exata para 2200/1500 */
+                aspect-ratio: 2200 / 1500;
                 background-image: url('ImagemDesktop.png');
                 background-size: contain;
             }
@@ -68,7 +69,6 @@
             .views { font-size: 0.8rem !important; padding: 6px 12px !important; color: #fff !important; }
         }
 
-        /* --- ESTILOS DO CONTAINER --- */
         .container {
             width: 90%; 
             display: flex;
@@ -93,7 +93,7 @@
             text-align: center;
         }
 
-        /* --- BARRA COM BRILHOS E LISTRAS (RESTAURADO) --- */
+        /* --- BARRA COM FIX DAS LISTRAS --- */
         .barra-container {
             width: 100%; 
             height: 38px;
@@ -105,7 +105,6 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.4), inset 0 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* O brilho superior da barra */
         .barra-container::after {
             content: '';
             position: absolute;
@@ -126,19 +125,19 @@
             z-index: 5;
         }
 
-        /* Listras animadas */
+        /* Listras com Opacidade 0 para só aparecerem no Turbo */
         .listras-esquerda, .listras-direita {
             position: absolute;
             width: 100%;
             height: 100%;
             background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent 100%);
             background-size: 40px 40px;
-            opacity: 1; /* Deixei visível por padrão, o JS ativa a animação */
+            opacity: 0; /* Começam invisíveis */
             z-index: 6;
+            transition: opacity 0.3s;
         }
 
-        /* ANIMAÇÕES */
-        .modo-turbo { animation: moveStripes 0.6s linear infinite !important; }
+        .modo-turbo { opacity: 1 !important; animation: moveStripes 0.6s linear infinite !important; }
         @keyframes moveStripes { from { background-position: 0 0; } to { background-position: 40px 0; } }
 
         @keyframes shake {
@@ -149,7 +148,6 @@
         }
         .tremer { animation: shake 0.2s infinite ease-in-out !important; }
 
-        /* --- VIEWS BOX --- */
         .views-container {
             display: flex;
             justify-content: space-between;
@@ -175,7 +173,6 @@
         #txtEsquerda { border-color: var(--cor-esquerda); }
         #txtDireita { border-color: var(--cor-direita); }
 
-        /* Ponto vermelho do "Live" */
         .views::after {
             content: '●';
             color: #ff0000;
@@ -236,11 +233,12 @@
         const _nE = document.getElementById('nomeEsquerda');
         const _nD = document.getElementById('nomeDireita');
 
-        // Limpa estados de animação
-        [_lE, _lD].forEach(el => el.classList.remove('modo-turbo'));
+        // Reset total das listras e tremedeira
+        _lE.classList.remove('modo-turbo');
+        _lD.classList.remove('modo-turbo');
         [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
 
-        // Ativa efeitos se houver disputa
+        // Ativa Turbo e Tremedeira baseado na vantagem
         if ((_v1 + _v2) > 0) {
             if (pE > 65) { 
                 _lE.classList.add('modo-turbo'); 
