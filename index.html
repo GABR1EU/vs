@@ -220,12 +220,33 @@
     </div>
 
     <script>
-    const _0x4f2a = ['QUl6YVN5RHJtZVlv d1dYQTBNR2Fwa1M0NWc5ZUhDX3prTVVMSmhZ', 'MEE3UEN3Vzhnc00=', 'Wm1RQUd0Nl95Qzg='];
-    const _0x1b3c = (i) => atob(_0x4f2a[i].replace(/\s/g, ''));
-    let _v1 = 0; let _v2 = 0;
-    const _k = _0x1b3c(0);
-    const _id1 = [_0x1b3c(1)];
-    const _id2 = [_0x1b3c(2)];
+    /* --- ÁREA DE CONFIGURAÇÃO SEGURA --- 
+       Para gerar novos códigos: https://www.base64encode.org/
+    */
+    const _SECRET_DATA = {
+        // Sua API Key (Protegida)
+        k: 'QUl6YVN5RHJtZVlvZ1dYQTBNR2Fwa1M0NWc5ZUhDX3prTVVMSmhZ',
+        
+        // IDs dos vídeos dos PRINCIPAIS (Verde)
+        principais: [
+            'MEE3UEN3Vzhnc00=' // Adicione mais códigos aqui separados por vírgula
+        ],
+        
+        // IDs dos vídeos dos SECUNDÁRIOS (Rosa)
+        secundarios: [
+            'Wm1RQUd0Nl95Qzg=' // Adicione mais códigos aqui separados por vírgula
+        ]
+    };
+
+    // --- LÓGICA DO SISTEMA (Não mexer abaixo) ---
+    const _dec = (str) => atob(str.replace(/\s/g, ''));
+    
+    let _v1 = 0; 
+    let _v2 = 0;
+    
+    const _k = _dec(_SECRET_DATA.k);
+    const _id1 = _SECRET_DATA.principais.map(id => _dec(id));
+    const _id2 = _SECRET_DATA.secundarios.map(id => _dec(id));
     const _all = [..._id1, ..._id2].join(',');
 
     function _uP() {
@@ -276,6 +297,7 @@
             if(_v1 === 0) { _v1 = 500000; _v2 = 500000; _uP(); }
         }
     }
+
     _fV();
     setInterval(_fV, 300000);
 </script>
