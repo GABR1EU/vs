@@ -211,90 +211,87 @@
     </div>
 
     <script>
-    const CONFIG = {
-        k: 'AIzaSyBjm4rr7njSItTjF_v8FQxMZJVy3xaGjHs', 
-        principais: ['NrUluayuOK4'], 
-        secundarios: ['NrUluayuOK4'] 
-    };
+const CONFIG = {
+    // Liste aqui todas as chaves que você criou (pode colocar quantas quiser)
+    keys: [
+        'AIzaSyBjm4rr7njSItTjF_v8FQxMZJVy3xaGjHs',
+        'AIzaSyD_Yg9tkciVq86UUmfqO2SRYFipaNdI_2o',
+        'AIzaSyAfKLLayDtnFKz7cb80_ldHbtIh-WRRnoY'
+    ],
+    principais: ['NrUluayuOK4'], 
+    secundarios: ['NrUluayuOK4'] 
+};
 
-    let _v1 = 0; let _v2 = 0;
-    const _id1 = CONFIG.principais;
-    const _id2 = CONFIG.secundarios;
-    const _all = [..._id1, ..._id2].join(',');
+let currentKeyIndex = 0;
+let _v1 = 0; let _v2 = 0;
+const _id1 = CONFIG.principais;
+const _id2 = CONFIG.secundarios;
 
-    function _uP() {
-        const t = (_v1 + _v2) || 1;
-        const pE = (_v1 / t) * 100;
+function _uP() {
+    const t = (_v1 + _v2) || 1;
+    const pE = (_v1 / t) * 100;
+    const _b = document.getElementById('barraVersus');
+    const _p = document.getElementById('barraProgresso');
+    const _lE = document.getElementById('listrasEsq');
+    const _lD = document.getElementById('listrasDir');
+    const _nE = document.getElementById('nomeEsquerda');
+    const _nD = document.getElementById('nomeDireita');
+
+    _lE.classList.remove('modo-turbo'); _lD.classList.remove('modo-turbo');
+    [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
+
+    if ((_v1 + _v2) > 0) {
+        if (pE > 65) { _lE.classList.add('modo-turbo'); _b.classList.add('tremer'); _nD.classList.add('tremer'); }
+        else if (pE < 35) { _lD.classList.add('modo-turbo'); _b.classList.add('tremer'); _nE.classList.add('tremer'); }
+    }
+    _p.style.width = pE + "%";
+    document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
+    document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
+}
+
+async function _fV() {
+    if (_id1.length === 0 && _id2.length === 0) return;
+    
+    const API_KEY = CONFIG.keys[currentKeyIndex];
+    const uniqueIds = [...new Set([..._id1, ..._id2])].join(',');
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${uniqueIds}&key=${API_KEY}`;
+
+    try {
+        const r = await fetch(url);
+        const d = await r.json();
         
-        const _b = document.getElementById('barraVersus');
-        const _p = document.getElementById('barraProgresso');
-        const _lE = document.getElementById('listrasEsq');
-        const _lD = document.getElementById('listrasDir');
-        const _nE = document.getElementById('nomeEsquerda');
-        const _nD = document.getElementById('nomeDireita');
-
-        // Reset total das listras e tremedeira
-        _lE.classList.remove('modo-turbo');
-        _lD.classList.remove('modo-turbo');
-        [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
-
-        // Ativa Turbo e Tremedeira baseado na vantagem
-        if ((_v1 + _v2) > 0) {
-            if (pE > 65) { 
-                _lE.classList.add('modo-turbo'); 
-                _b.classList.add('tremer');
-                _nD.classList.add('tremer');
-            } else if (pE < 35) { 
-                _lD.classList.add('modo-turbo'); 
-                _b.classList.add('tremer');
-                _nE.classList.add('tremer');
-            }
-        }
-
-        _p.style.width = pE + "%";
-        document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
-        document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
-    }
-
-    async function _fV() {
-        if (_id1.length === 0 && _id2.length === 0) { _v1 = 0; _v2 = 0; _uP(); return; }
-
-        try {
-            // Pega IDs únicos para a chamada da API (evita erro de duplicata na URL)
-            const uniqueIds = [...new Set([..._id1, ..._id2])].join(',');
-            const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${uniqueIds}&key=${CONFIG.k}`;
-            const r = await fetch(url);
-            const d = await r.json();
+        // SE DER ERRO DE COTA: Tenta a próxima chave imediatamente
+        if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
+            console.warn(`Cota esgotada na chave ${currentKeyIndex + 1}. Pulando para a próxima...`);
             
-            if (d.items) {
-                let s1 = 0; let s2 = 0;
-                const viewsMap = {};
-
-                // Guarda as views de cada vídeo num "mapa"
-                d.items.forEach(v => {
-                    viewsMap[v.id] = parseInt(v.statistics.viewCount);
-                });
-
-                // Soma para o lado Esquerdo
-                _id1.forEach(id => {
-                    if (viewsMap[id]) s1 += viewsMap[id];
-                });
-
-                // Soma para o lado Direito
-                _id2.forEach(id => {
-                    if (viewsMap[id]) s2 += viewsMap[id];
-                });
-
-                _v1 = s1; _v2 = s2;
-                _uP();
+            if (currentKeyIndex < CONFIG.keys.length - 1) {
+                currentKeyIndex++;
+                return _fV(); // Re-executa a função com a nova chave
+            } else {
+                console.error("TODAS as chaves de API esgotaram por hoje!");
+                return;
             }
-        } catch (e) {
-            console.error("Erro na busca:", e);
         }
-    }
 
-    _fV();
-    setInterval(_fV, 150000); 
-    </script>
+        if (d.items) {
+            let s1 = 0; let s2 = 0;
+            const viewsMap = {};
+            d.items.forEach(v => { viewsMap[v.id] = parseInt(v.statistics.viewCount); });
+            _id1.forEach(id => { if (viewsMap[id]) s1 += viewsMap[id]; });
+            _id2.forEach(id => { if (viewsMap[id]) s2 += viewsMap[id]; });
+            _v1 = s1; _v2 = s2;
+            _uP();
+        }
+    } catch (e) { 
+        console.error("Erro de conexão:", e); 
+    }
+}
+
+_fV(); 
+// Atualiza a cada 5 minutos (300.000ms) para durar o dia todo
+setInterval(_fV, 300000); 
+</script>
+
+
 </body>
 </html>
