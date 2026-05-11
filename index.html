@@ -260,17 +260,31 @@
         if (_id1.length === 0 && _id2.length === 0) { _v1 = 0; _v2 = 0; _uP(); return; }
 
         try {
-            const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${_all}&key=${CONFIG.k}`;
+            // Pega IDs únicos para a chamada da API (evita erro de duplicata na URL)
+            const uniqueIds = [...new Set([..._id1, ..._id2])].join(',');
+            const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${uniqueIds}&key=${CONFIG.k}`;
             const r = await fetch(url);
             const d = await r.json();
             
             if (d.items) {
                 let s1 = 0; let s2 = 0;
+                const viewsMap = {};
+
+                // Guarda as views de cada vídeo num "mapa"
                 d.items.forEach(v => {
-                    const c = parseInt(v.statistics.viewCount);
-                    if (_id1.includes(v.id)) s1 += c;
-                    else if (_id2.includes(v.id)) s2 += c;
+                    viewsMap[v.id] = parseInt(v.statistics.viewCount);
                 });
+
+                // Soma para o lado Esquerdo
+                _id1.forEach(id => {
+                    if (viewsMap[id]) s1 += viewsMap[id];
+                });
+
+                // Soma para o lado Direito
+                _id2.forEach(id => {
+                    if (viewsMap[id]) s2 += viewsMap[id];
+                });
+
                 _v1 = s1; _v2 = s2;
                 _uP();
             }
