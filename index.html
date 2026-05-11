@@ -219,13 +219,15 @@ const CONFIG = {
         'AIzaSyCp-qBHGCU6dPEUpYdp3dE1sB_V81gFzL0',
         'AIzaSyB9R1ZPEbMYPzx69a3CCCMA2pAT1lFdEaE'
     ],
+    // DICA: Verifique se os IDs abaixo estão corretos para a disputa atual
     principais: ['NrUluayuOK4'], 
     secundarios: ['NrUluayuOK4'] 
 };
 
 let currentKeyIndex = 0;
-let _v1 = parseInt(localStorage.getItem('cache_v1')) || 0; 
-let _v2 = parseInt(localStorage.getItem('cache_v2')) || 0;
+// Pega os valores salvos no navegador para não começar do zero
+let _v1 = parseInt(localStorage.getItem('torajo_v1')) || 0; 
+let _v2 = parseInt(localStorage.getItem('torajo_v2')) || 0;
 
 function _uP() {
     const t = (_v1 + _v2) || 1;
@@ -234,11 +236,16 @@ function _uP() {
     const _p = document.getElementById('barraProgresso');
     const _lE = document.getElementById('listrasEsq');
     const _lD = document.getElementById('listrasDir');
+    const _nE = document.getElementById('nomeEsquerda');
+    const _nD = document.getElementById('nomeDireita');
 
-    if (pE > 65) { _lE.classList.add('modo-turbo'); _b.classList.add('tremer'); }
-    else if (pE < 35) { _lD.classList.add('modo-turbo'); _b.classList.add('tremer'); }
-    else { _lE.classList.remove('modo-turbo'); _lD.classList.remove('modo-turbo'); _b.classList.remove('tremer'); }
+    _lE.classList.remove('modo-turbo'); _lD.classList.remove('modo-turbo');
+    [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
 
+    if ((_v1 + _v2) > 0) {
+        if (pE > 65) { _lE.classList.add('modo-turbo'); _b.classList.add('tremer'); _nD.classList.add('tremer'); }
+        else if (pE < 35) { _lD.classList.add('modo-turbo'); _b.classList.add('tremer'); _nE.classList.add('tremer'); }
+    }
     _p.style.width = pE + "%";
     document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
     document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
@@ -253,12 +260,12 @@ async function _fV() {
         const r = await fetch(url);
         const d = await r.json();
         
-        if (d.error && d.error.code === 403) {
+        if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
             if (currentKeyIndex < CONFIG.keys.length - 1) {
                 currentKeyIndex++;
                 return _fV();
             }
-            return;
+            return; // Se todas as chaves acabarem, ele apenas para aqui e MANTÉM os números atuais
         }
 
         if (d.items) {
@@ -269,17 +276,24 @@ async function _fV() {
             CONFIG.secundarios.forEach(id => { if (viewsMap[id]) s2 += viewsMap[id]; });
 
             _v1 = s1; _v2 = s2;
-            // Salva no navegador do usuário para não zerar se a API cair
-            localStorage.setItem('cache_v1', _v1);
-            localStorage.setItem('cache_v2', _v2);
+            
+            // SALVA OS NÚMEROS NO NAVEGADOR
+            localStorage.setItem('torajo_v1', _v1);
+            localStorage.setItem('torajo_v2', _v2);
+            
             _uP();
         }
-    } catch (e) { console.error(e); }
+    } catch (e) { 
+        console.error("Erro, mantendo valores salvos."); 
+    }
 }
 
-_uP(); // Carrega o que estiver no cache primeiro
+// Inicializa a tela com os valores que já temos
+_uP();
 _fV(); 
-setInterval(_fV, 900000); // 15 minutos de intervalo
+
+// 15 minutos (900.000ms) é um tempo seguro para o seu fluxo
+setInterval(_fV, 900000); 
 </script>
 
 
