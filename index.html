@@ -34,11 +34,9 @@
             margin: 0;
         }
 
-        /* CONFIGURAÇÃO DESKTOP (Ajustado para 2200x1500) */
         @media (min-width: 769px) {
             #placar-stage {
                 max-width: 1300px; 
-                /* Proporção exata para 2200/1500 */
                 aspect-ratio: 2200 / 1500;
                 background-image: url('ImagemDesktop.png');
                 background-size: contain;
@@ -47,7 +45,6 @@
             .nome-personagem { font-size: 2.2rem; }
         }
 
-        /* CONFIGURAÇÃO CELULAR (MOBILE) */
         @media (max-width: 768px) {
             #placar-stage {
                 width: 100% !important; 
@@ -93,7 +90,6 @@
             text-align: center;
         }
 
-        /* --- BARRA COM FIX DAS LISTRAS --- */
         .barra-container {
             width: 100%; 
             height: 38px;
@@ -125,14 +121,13 @@
             z-index: 5;
         }
 
-        /* Listras com Opacidade 0 para só aparecerem no Turbo */
         .listras-esquerda, .listras-direita {
             position: absolute;
             width: 100%;
             height: 100%;
             background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent 100%);
             background-size: 40px 40px;
-            opacity: 0; /* Começam invisíveis */
+            opacity: 0;
             z-index: 6;
             transition: opacity 0.3s;
         }
@@ -212,21 +207,20 @@
 
 <script>
 const CONFIG = {
+    // Liste aqui todas as chaves que você criou
     keys: [
+        'AIzaSyDTN5Xk0snwmanEc131kXFdbl9gB-lSynk', // Coloquei sua chave nova em primeiro
         'AIzaSyBjm4rr7njSItTjF_v8FQxMZJVy3xaGjHs',
         'AIzaSyD_Yg9tkciVq86UUmfqO2SRYFipaNdI_2o',
         'AIzaSyAfKLLayDtnFKz7cb80_ldHbtIh-WRRnoY',
         'AIzaSyCp-qBHGCU6dPEUpYdp3dE1sB_V81gFzL0',
-        'AIzaSyB9R1ZPEbMYPzx69a3CCCMA2pAT1lFdEaE',
-        'AIzaSyDTN5Xk0snwmanEc131kXFdbl9gB-lSynk'
+        'AIzaSyB9R1ZPEbMYPzx69a3CCCMA2pAT1lFdEaE'
     ],
-    // DICA: Verifique se os IDs abaixo estão corretos para a disputa atual
     principais: ['NrUluayuOK4'], 
     secundarios: ['NrUluayuOK4'] 
 };
 
 let currentKeyIndex = 0;
-// Pega os valores salvos no navegador para não começar do zero
 let _v1 = parseInt(localStorage.getItem('torajo_v1')) || 0; 
 let _v2 = parseInt(localStorage.getItem('torajo_v2')) || 0;
 
@@ -262,11 +256,12 @@ async function _fV() {
         const d = await r.json();
         
         if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
+            console.warn("Chave atual esgotada, tentando próxima...");
             if (currentKeyIndex < CONFIG.keys.length - 1) {
                 currentKeyIndex++;
                 return _fV();
             }
-            return; // Se todas as chaves acabarem, ele apenas para aqui e MANTÉM os números atuais
+            return;
         }
 
         if (d.items) {
@@ -277,26 +272,18 @@ async function _fV() {
             CONFIG.secundarios.forEach(id => { if (viewsMap[id]) s2 += viewsMap[id]; });
 
             _v1 = s1; _v2 = s2;
-            
-            // SALVA OS NÚMEROS NO NAVEGADOR
             localStorage.setItem('torajo_v1', _v1);
             localStorage.setItem('torajo_v2', _v2);
-            
             _uP();
         }
     } catch (e) { 
-        console.error("Erro, mantendo valores salvos."); 
+        console.error("Erro na conexão API."); 
     }
 }
 
-// Inicializa a tela com os valores que já temos
 _uP();
 _fV(); 
-
-// 15 minutos (900.000ms) é um tempo seguro para o seu fluxo
-setInterval(_fV, 900000); 
+setInterval(_fV, 900000); // 15 minutos
 </script>
-
-
 </body>
 </html>
