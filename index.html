@@ -93,7 +93,7 @@
         .barra-container {
             width: 100%; 
             height: 38px;
-            background-color: var(--cor-direita);
+            background-color: var(--cor-direita); /* Fundo rosa padrão */
             border: 4px solid #000;
             border-radius: 50px;
             overflow: hidden;
@@ -101,16 +101,18 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.4), inset 0 2px 10px rgba(0,0,0,0.5);
         }
 
+        /* Camada de brilho superior */
         .barra-container::after {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 50%;
             background: linear-gradient(to bottom, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.1) 100%);
-            z-index: 20;
+            z-index: 30; /* Acima de tudo */
             pointer-events: none;
         }
 
+        /* Lado Verde (Principais) */
         .progresso-esquerda {
             height: 100%;
             width: 50%; 
@@ -118,7 +120,7 @@
             transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
             border-right: 4px solid #000;
             position: relative;
-            z-index: 5;
+            z-index: 20; /* Acima do fundo rosa e das listras da direita */
         }
 
         .listras-esquerda, .listras-direita {
@@ -128,9 +130,11 @@
             background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent 100%);
             background-size: 40px 40px;
             opacity: 0;
-            z-index: 6;
             transition: opacity 0.3s;
         }
+
+        .listras-esquerda { z-index: 21; } /* Dentro da barra verde */
+        .listras-direita { z-index: 5; top: 0; left: 0; } /* No fundo rosa */
 
         .modo-turbo { opacity: 1 !important; animation: moveStripes 0.6s linear infinite !important; }
         @keyframes moveStripes { from { background-position: 0 0; } to { background-position: 40px 0; } }
@@ -189,6 +193,7 @@
 
             <div id="barraVersus" class="barra-container">
                 <div id="listrasDir" class="listras-direita"></div>
+                
                 <div id="barraProgresso" class="progresso-esquerda">
                     <div id="listrasEsq" class="listras-esquerda"></div>
                 </div>
@@ -207,7 +212,6 @@
 
 <script>
 const CONFIG = {
-
     keys: [
         'AIzaSyDTN5Xk0snwmanEc131kXFdbl9gB-lSynk', 
         'AIzaSyCyo0u-XTJLy6DjQ5IcUW7A1OUnd7yijTU',
@@ -240,13 +244,23 @@ function _uP() {
     const _nE = document.getElementById('nomeEsquerda');
     const _nD = document.getElementById('nomeDireita');
 
-    _lE.classList.remove('modo-turbo'); _lD.classList.remove('modo-turbo');
+    _lE.classList.remove('modo-turbo'); 
+    _lD.classList.remove('modo-turbo');
     [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
 
     if ((_v1 + _v2) > 0) {
-        if (pE > 55) { _lE.classList.add('modo-turbo'); _b.classList.add('tremer'); _nD.classList.add('tremer'); }
-        else if (pE < 45) { _lD.classList.add('modo-turbo'); _b.classList.add('tremer'); _nE.classList.add('tremer'); }
+        if (pE > 55) { 
+            _lE.classList.add('modo-turbo'); 
+            _b.classList.add('tremer'); 
+            _nD.classList.add('tremer'); 
+        }
+        else if (pE < 45) { 
+            _lD.classList.add('modo-turbo'); 
+            _b.classList.add('tremer'); 
+            _nE.classList.add('tremer'); 
+        }
     }
+    
     _p.style.width = pE + "%";
     document.getElementById('txtEsquerda').innerText = _v1.toLocaleString('pt-BR') + " views";
     document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
@@ -262,7 +276,6 @@ async function _fV() {
         const d = await r.json();
         
         if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
-            console.warn("Chave atual esgotada, tentando próxima...");
             if (currentKeyIndex < CONFIG.keys.length - 1) {
                 currentKeyIndex++;
                 return _fV();
@@ -289,7 +302,7 @@ async function _fV() {
 
 _uP();
 _fV(); 
-setInterval(_fV, 1800000); // 15 minutos
+setInterval(_fV, 1800000); 
 </script>
 </body>
 </html>
