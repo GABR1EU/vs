@@ -120,7 +120,7 @@
             transition: width 0.8s cubic-bezier(0.25, 1, 0.5, 1);
             border-right: 4px solid #000;
             position: relative;
-            z-index: 20; /* Acima do fundo rosa e das listras da direita */
+            z-index: 20; /* Mantém acima das listras de fundo da direita */
         }
 
         .listras-esquerda, .listras-direita {
@@ -276,6 +276,7 @@ async function _fV() {
         const d = await r.json();
         
         if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
+            console.warn("Chave atual esgotada, tentando próxima...");
             if (currentKeyIndex < CONFIG.keys.length - 1) {
                 currentKeyIndex++;
                 return _fV();
@@ -302,7 +303,7 @@ async function _fV() {
 
 _uP();
 _fV(); 
-setInterval(_fV, 1800000); 
+setInterval(_fV, 1800000); // Executa a cada 30 minutos
 </script>
 </body>
 </html>
