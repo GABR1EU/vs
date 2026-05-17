@@ -244,7 +244,8 @@ const CONFIG = {
         { id: 'j-rlc0o6ILA', data: '2026-05-16', viewsFixas: 300000 },
         { id: 'aP_1McdVF_4', data: '2026-05-15', viewsFixas: 250000 },
         { id: 'OHZHCgU9Y9g', data: '2026-05-12', viewsFixas: 1200000 },
-        { id: '9kdYCYZtom8', data: '2026-05-17', viewsFixas: 1200000 } // Vídeo de Hoje (17/05)! Vai ser ignorado na largada zerada
+        { id: '9kdYCYZtom8', data: '2026-05-17', viewsFixas: 1200000 },
+        { id: 'CFrrpVBsTWU', data: '2026-05-17', viewsFixas: 300000 }
     ],
     
     secundarios: [
@@ -256,7 +257,7 @@ const CONFIG = {
     ],
 
     ambos: [
-        { id: 'NrUluayuOK4', data: '2026-05-17', viewsFixas: 400000 }, // Vídeo de Hoje (17/05)! Vai ser ignorado na largada zerada
+        { id: 'NrUluayuOK4', data: '2026-05-17', viewsFixas: 400000 }, 
         { id: 'YC5jGimSeNo', data: '2026-05-16', viewsFixas: 370000 },
         { id: 'Q72h8lVbNaE', data: '2026-05-15', viewsFixas: 400000 }
     ]
@@ -264,21 +265,17 @@ const CONFIG = {
 
 let currentKeyIndex = 0;
 
-// --- MATEMÁTICA DA BASE INICIAL INTELIGENTE (IGNORA O DIA DE HOJE) ---
+// --- MATEMÁTICA DA BASE INICIAL INTELIGENTE (UTC FIXO) ---
 let baseEsquerda = 0; let baseDireita = 0;
-const stringHoje = new Date().toISOString().split('T')[0]; // Pega a data atual do sistema no formato 'AAAA-MM-DD'
+const dHoje = new Date();
+const stringHoje = `${dHoje.getUTCFullYear()}-${String(dHoje.getUTCMonth()+1).padStart(2,'0')}-${String(dHoje.getUTCDate()).padStart(2,'0')}`;
 
 function somarBaseSegura(lista, tipoPlacar) {
     lista.forEach(v => {
-        // Se a data do vídeo for IGUAL à data de hoje, pula e NÃO soma na largada inicial
-        if (v.data === stringHoje) return;
-
+        if (v.data === stringHoje) return; // Ignora o dia de hoje no primeiro milissegundo do load
         if (tipoPlacar === 'esquerda') baseEsquerda += v.viewsFixas;
         if (tipoPlacar === 'direita') baseDireita += v.viewsFixas;
-        if (tipoPlacar === 'ambos') {
-            baseEsquerda += v.viewsFixas;
-            baseDireita += v.viewsFixas;
-        }
+        if (tipoPlacar === 'ambos') { baseEsquerda += v.viewsFixas; baseDireita += v.viewsFixas; }
     });
 }
 
@@ -286,7 +283,6 @@ somarBaseSegura(CONFIG.principais, 'esquerda');
 somarBaseSegura(CONFIG.secundarios, 'direita');
 somarBaseSegura(CONFIG.ambos, 'ambos');
 
-// Inicia com o localStorage OU com a base calculada (sem os vídeos de hoje)
 let _v1 = parseInt(localStorage.getItem('torajo_v1')) || baseEsquerda; 
 let _v2 = parseInt(localStorage.getItem('torajo_v2')) || baseDireita;
 
@@ -300,8 +296,7 @@ function _uP() {
     const _nE = document.getElementById('nomeEsquerda');
     const _nD = document.getElementById('nomeDireita');
 
-    _lE.classList.remove('modo-turbo'); 
-    _lD.classList.remove('modo-turbo');
+    _lE.classList.remove('modo-turbo'); _lD.classList.remove('modo-turbo');
     [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
 
     if ((_v1 + _v2) > 0) {
@@ -314,14 +309,15 @@ function _uP() {
     document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
 }
 
-async function _fV() {
+async function _fV(forcarPeloLoop = false) {
     const agora = Date.now();
     const minutosAtuais = new Date(agora).getMinutes();
     
     const blocoMinutosValido = (minutosAtuais % 25 === 0);
     const ultimaJanelaSalva = parseInt(localStorage.getItem('torajo_last_block')) || -1;
 
-    if (!blocoMinutosValido || (minutosAtuais === ultimaJanelaSalva)) {
+    // Se NÃO for o loop de tempo real da aba aberta, valida a trava estrita dos 25 minutos
+    if (!forcarPeloLoop && (!blocoMinutosValido || (minutosAtuais === ultimaJanelaSalva))) {
         _v1 = parseInt(localStorage.getItem('torajo_v1')) || _v1;
         _v2 = parseInt(localStorage.getItem('torajo_v2')) || _v2;
         _uP(); 
@@ -335,14 +331,13 @@ async function _fV() {
 
     function analisarVideos(lista, tipoPlacar) {
         lista.forEach(video => {
-            const dataLancamento = new Date(video.data + 'T00:00:00').getTime();
+            const p = video.data.split('-');
+            const dataLancamento = Date.UTC(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
+            
             if (agora - dataLancamento > tresDiasEmMs) {
                 if (tipoPlacar === 'esquerda') somaFixaEsquerda += video.viewsFixas;
                 if (tipoPlacar === 'direita') somaFixaDireita += video.viewsFixas;
-                if (tipoPlacar === 'ambos') {
-                    somaFixaEsquerda += video.viewsFixas;
-                    somaFixaDireita += video.viewsFixas;
-                }
+                if (tipoPlacar === 'ambos') { somaFixaEsquerda += video.viewsFixas; somaFixaDireita += video.viewsFixas; }
             } else {
                 idsParaChamarAPI.push(video.id);
             }
@@ -373,7 +368,7 @@ async function _fV() {
         if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
             if (currentKeyIndex < CONFIG.keys.length - 1) {
                 currentKeyIndex++;
-                return _fV(); 
+                return _fV(forcarPeloLoop); 
             }
             return;
         }
@@ -396,7 +391,6 @@ async function _fV() {
             localStorage.setItem('torajo_v1', _v1);
             localStorage.setItem('torajo_v2', _v2);
             localStorage.setItem('torajo_last_block', minutosAtuais); 
-            
             _uP();
         }
     } catch (e) { 
@@ -407,9 +401,23 @@ async function _fV() {
     }
 }
 
+// Inicializa o ecrã imediatamente com segurança
+_v1 = parseInt(localStorage.getItem('torajo_v1')) || _v1;
+_v2 = parseInt(localStorage.getItem('torajo_v2')) || _v2;
 _uP();
-setInterval(_fV, 30000);
-_fV(); 
+
+// 1. Monitoriza acessos e F5 a cada 30 segundos
+setInterval(() => {
+    _fV(false); 
+}, 30000);
+
+// 2. Garante o "Live ao vivo" forçando o bypass da trava a cada 25 minutos para abas abertas
+setInterval(() => {
+    _fV(true); 
+}, 1500000);
+
+// Executa a primeira checagem inteligente no load
+_fV(false); 
 </script>
 </body>
 </html>
