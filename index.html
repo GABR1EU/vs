@@ -211,7 +211,7 @@
 <script>
 const CONFIG = {
     keys: [
-        'AIzaSyBqBbOLtNu-4uEV6Q5cSwVOR5n6b1eh3Uw', // Nova Conta (Ativas)
+        'AIzaSyBqBbOLtNu-4uEV6Q5cSwVOR5n6b1eh3Uw',
         'AIzaSyDm-qvemTMfuSYz0lWlF_YQQkyJ369UYi4',
         'AIzaSyBZl4xBbHCUxA2BqXBC6IgU1rVr90odE_w',
         'AIzaSyC_bZXmBhJnMN_V9GJkTmoZxQK1gr6aSXo',
@@ -235,8 +235,26 @@ const CONFIG = {
         'AIzaSyB15bsKcp6zHUdleVF9HiU_xjF_rjHqIvY',
         'AIzaSyDFYVv7mr1i4T1DKxicv9ptZ3bITY_32gY'
     ],
-    principais: ['NrUluayuOK4','OHZHCgU9Y9g','YC5jGimSeNo','Q72h8lVbNaE','j-rlc0o6ILA','aP_1McdVF_4'], 
-    secundarios: ['NrUluayuOK4','YC5jGimSeNo','9c3wOQRGR30','Q72h8lVbNaE','l0mNft1jFjI','P1aI_WmkqAY','XoVvt8Ws12U','93PezDiU5vc'] 
+    
+    // FORMATO DAS LISTAS: [ { id: 'CÓDIGO', data: 'ANO-MÊS-DIA', viewsFixas: NÚMERO_STÁVEL } ]
+    principais: [
+        { id: 'j-rlc0o6ILA', data: '2026-05-16', viewsFixas: 450000 },
+        { id: 'aP_1McdVF_4', data: '2026-05-15', viewsFixas: 380000 }
+    ],
+    
+    secundarios: [
+        { id: '9c3wOQRGR30', data: '2026-05-16', viewsFixas: 510000 },
+        { id: 'l0mNft1jFjI', data: '2026-05-14', viewsFixas: 290000 },
+        { id: 'P1aI_WmkqAY', data: '2026-05-10', viewsFixas: 890000 }, // Esse já passou de 3 dias, vai usar os 890k fixos direto sem ir na API!
+        { id: 'XoVvt8Ws12U', data: '2026-05-09', viewsFixas: 620000 },
+        { id: '93PezDiU5vc', data: '2026-05-08', viewsFixas: 410000 }
+    ],
+
+    ambos: [
+        { id: 'NrUluayuOK4', data: '2026-05-17', viewsFixas: 1200000 }, // Vídeo novo que conta pros dois lados!
+        { id: 'YC5jGimSeNo', data: '2026-05-16', viewsFixas: 950000 },
+        { id: 'Q72h8lVbNaE', data: '2026-05-15', viewsFixas: 1500000 }
+    ]
 };
 
 let currentKeyIndex = 0;
@@ -258,16 +276,8 @@ function _uP() {
     [_b, _nE, _nD].forEach(el => el.classList.remove('tremer'));
 
     if ((_v1 + _v2) > 0) {
-        if (pE > 55) { 
-            _lE.classList.add('modo-turbo'); 
-            _b.classList.add('tremer'); 
-            _nD.classList.add('tremer'); 
-        }
-        else if (pE < 45) { 
-            _lD.classList.add('modo-turbo'); 
-            _b.classList.add('tremer'); 
-            _nE.classList.add('tremer'); 
-        }
+        if (pE > 55) { _lE.classList.add('modo-turbo'); _b.classList.add('tremer'); _nD.classList.add('tremer'); }
+        else if (pE < 45) { _lD.classList.add('modo-turbo'); _b.classList.add('tremer'); _nE.classList.add('tremer'); }
     }
     
     _p.style.width = pE + "%";
@@ -278,25 +288,65 @@ function _uP() {
 async function _fV(force = false) {
     const agora = Date.now();
     const ultimaAtualizacao = parseInt(localStorage.getItem('torajo_last_sync')) || 0;
-    const tempoEspera = 600000; // 10 minutos em milissegundos (10 * 60 * 1000)
+    const tempoEspera = 600000; // 10 minutos contra F5
 
-    // Bloqueia requisições repetidas via F5 se estiver dentro da janela de 10 minutos
     if (!force && (agora - ultimaAtualizacao < tempoEspera)) {
         console.log("Trava Anti-F5 ativa: Carregando dados do cache local.");
         _uP(); 
         return;
     }
 
+    // --- MATEMÁTICA INTELIGENTE DE DATAS (CONGELAMENTO DE 3 DIAS) ---
+    let somaFixaEsquerda = 0;
+    let somaFixaDireita = 0;
+    let idsParaChamarAPI = [];
+
+    const tresDiasEmMs = 3 * 24 * 60 * 60 * 1000;
+
+    // Função interna para processar cada grupo de vídeos
+    function analisarVideos(lista, tipoPlacar) {
+        lista.forEach(video => {
+            const dataLancamento = new Date(video.data + 'T00:00:00').getTime();
+            
+            if (agora - dataLancamento > tresDiasEmMs) {
+                // PASSOU DE 3 DIAS: Soma o valor estático direto e NÃO põe na API
+                if (tipoPlacar === 'esquerda') somaFixaEsquerda += video.viewsFixas;
+                if (tipoPlacar === 'direita') somaFixaDireita += video.viewsFixas;
+                if (tipoPlacar === 'ambos') {
+                    somaFixaEsquerda += video.viewsFixas;
+                    somaFixaDireita += video.viewsFixas;
+                }
+            } else {
+                // VÍDEO NOVO: Vai precisar consultar o YouTube
+                idsParaChamarAPI.push(video.id);
+            }
+        });
+    }
+
+    analisarVideos(CONFIG.principais, 'esquerda');
+    analisarVideos(CONFIG.secundarios, 'direita');
+    analisarVideos(CONFIG.ambos, 'ambos');
+
+    // Se NÃO houver nenhum vídeo novo precisando da API, monta o placar só com a base estável e encerra
+    if (idsParaChamarAPI.length === 0) {
+        _v1 = somaFixaEsquerda;
+        _v2 = somaFixaDireita;
+        localStorage.setItem('torajo_v1', _v1);
+        localStorage.setItem('torajo_v2', _v2);
+        localStorage.setItem('torajo_last_sync', agora);
+        _uP();
+        return;
+    }
+
     const API_KEY = CONFIG.keys[currentKeyIndex];
-    const uniqueIds = [...new Set([...CONFIG.principais, ...CONFIG.secundarios])].join(',');
-    const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${uniqueIds}&key=${API_KEY}`;
+    const uniqueIdsStr = [...new Set(idsParaChamarAPI)].join(',');
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${uniqueIdsStr}&key=${API_KEY}`;
 
     try {
         const r = await fetch(url);
         const d = await r.json();
         
         if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
-            console.warn("Chave atual esgotada, tentando próxima...");
             if (currentKeyIndex < CONFIG.keys.length - 1) {
                 currentKeyIndex++;
                 return _fV(force);
@@ -305,11 +355,21 @@ async function _fV(force = false) {
         }
 
         if (d.items) {
-            let s1 = 0; let s2 = 0;
+            let s1 = somaFixaEsquerda; 
+            let s2 = somaFixaDireita;
             const viewsMap = {};
+            
             d.items.forEach(v => { viewsMap[v.id] = parseInt(v.statistics.viewCount); });
-            CONFIG.principais.forEach(id => { if (viewsMap[id]) s1 += viewsMap[id]; });
-            CONFIG.secundarios.forEach(id => { if (viewsMap[id]) s2 += viewsMap[id]; });
+            
+            // Soma apenas os vídeos ativos que vieram da API
+            CONFIG.principais.forEach(v => { if (viewsMap[v.id]) s1 += viewsMap[v.id]; });
+            CONFIG.secundarios.forEach(v => { if (viewsMap[v.id]) s2 += viewsMap[v.id]; });
+            CONFIG.ambos.forEach(v => { 
+                if (viewsMap[v.id]) {
+                    s1 += viewsMap[v.id]; 
+                    s2 += viewsMap[v.id]; 
+                }
+            });
 
             _v1 = s1; _v2 = s2;
             
@@ -325,11 +385,9 @@ async function _fV(force = false) {
     }
 }
 
-// Inicialização segura da interface
 _uP();
 _fV(false); 
 
-// Loop automatizado: Força uma requisição real na API a cada 10 minutos cravados
 setInterval(() => {
     _fV(true); 
 }, 600000); 
