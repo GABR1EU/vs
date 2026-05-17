@@ -211,7 +211,7 @@
 <script>
 const CONFIG = {
     keys: [
-        'AIzaSyBqBbOLtNu-4uEV6Q5cSwVOR5n6b1eh3Uw',
+        'AIzaSyBqBbOLtNu-4uEV6Q5cSwVOR5n6b1eh3Uw', // Nova Conta (Ativas)
         'AIzaSyDm-qvemTMfuSYz0lWlF_YQQkyJ369UYi4',
         'AIzaSyBZl4xBbHCUxA2BqXBC6IgU1rVr90odE_w',
         'AIzaSyC_bZXmBhJnMN_V9GJkTmoZxQK1gr6aSXo',
@@ -234,7 +234,6 @@ const CONFIG = {
         'AIzaSyBnf-IgZ0nqz8SKxQJ41YDAWMIjguONgzM',
         'AIzaSyB15bsKcp6zHUdleVF9HiU_xjF_rjHqIvY',
         'AIzaSyDFYVv7mr1i4T1DKxicv9ptZ3bITY_32gY'
-        
     ],
     principais: ['NrUluayuOK4','OHZHCgU9Y9g','YC5jGimSeNo','Q72h8lVbNaE','j-rlc0o6ILA','aP_1McdVF_4'], 
     secundarios: ['NrUluayuOK4','YC5jGimSeNo','9c3wOQRGR30','Q72h8lVbNaE','l0mNft1jFjI','P1aI_WmkqAY','XoVvt8Ws12U','93PezDiU5vc'] 
@@ -276,7 +275,18 @@ function _uP() {
     document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
 }
 
-async function _fV() {
+async function _fV(force = false) {
+    const agora = Date.now();
+    const ultimaAtualizacao = parseInt(localStorage.getItem('torajo_last_sync')) || 0;
+    const tempoEspera = 600000; // 10 minutos em milissegundos (10 * 60 * 1000)
+
+    // Bloqueia requisições repetidas via F5 se estiver dentro da janela de 10 minutos
+    if (!force && (agora - ultimaAtualizacao < tempoEspera)) {
+        console.log("Trava Anti-F5 ativa: Carregando dados do cache local.");
+        _uP(); 
+        return;
+    }
+
     const API_KEY = CONFIG.keys[currentKeyIndex];
     const uniqueIds = [...new Set([...CONFIG.principais, ...CONFIG.secundarios])].join(',');
     const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${uniqueIds}&key=${API_KEY}`;
@@ -289,7 +299,7 @@ async function _fV() {
             console.warn("Chave atual esgotada, tentando próxima...");
             if (currentKeyIndex < CONFIG.keys.length - 1) {
                 currentKeyIndex++;
-                return _fV();
+                return _fV(force);
             }
             return;
         }
@@ -302,16 +312,27 @@ async function _fV() {
             CONFIG.secundarios.forEach(id => { if (viewsMap[id]) s2 += viewsMap[id]; });
 
             _v1 = s1; _v2 = s2;
+            
             localStorage.setItem('torajo_v1', _v1);
             localStorage.setItem('torajo_v2', _v2);
+            localStorage.setItem('torajo_last_sync', agora);
+            
             _uP();
         }
     } catch (e) { 
-        console.error("Erro na conexão API."); 
+        console.error("Erro na conexão API, mantendo cache."); 
+        _uP(); 
     }
 }
 
+// Inicialização segura da interface
 _uP();
-_fV(); 
-setInterval(_fV, 3600000); // Ajustado de volta para 30 minutos (1.800.000ms)
+_fV(false); 
+
+// Loop automatizado: Força uma requisição real na API a cada 10 minutos cravados
+setInterval(() => {
+    _fV(true); 
+}, 600000); 
 </script>
+</body>
+</html>
