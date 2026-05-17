@@ -244,7 +244,7 @@ const CONFIG = {
         { id: 'j-rlc0o6ILA', data: '2026-05-16', viewsFixas: 300000 },
         { id: 'aP_1McdVF_4', data: '2026-05-15', viewsFixas: 250000 },
         { id: 'OHZHCgU9Y9g', data: '2026-05-12', viewsFixas: 1200000 },
-        { id: '9kdYCYZtom8', data: '2026-05-17', viewsFixas: 1200000 }
+        { id: '9kdYCYZtom8', data: '2026-05-17', viewsFixas: 1200000 } // Vídeo de Hoje (17/05)! Vai ser ignorado na largada zerada
     ],
     
     secundarios: [
@@ -256,7 +256,7 @@ const CONFIG = {
     ],
 
     ambos: [
-        { id: 'NrUluayuOK4', data: '2026-05-17', viewsFixas: 400000 }, 
+        { id: 'NrUluayuOK4', data: '2026-05-17', viewsFixas: 400000 }, // Vídeo de Hoje (17/05)! Vai ser ignorado na largada zerada
         { id: 'YC5jGimSeNo', data: '2026-05-16', viewsFixas: 370000 },
         { id: 'Q72h8lVbNaE', data: '2026-05-15', viewsFixas: 400000 }
     ]
@@ -264,13 +264,29 @@ const CONFIG = {
 
 let currentKeyIndex = 0;
 
-// --- MATEMÁTICA DA BASE INICIAL DE SEGURANÇA ---
+// --- MATEMÁTICA DA BASE INICIAL INTELIGENTE (IGNORA O DIA DE HOJE) ---
 let baseEsquerda = 0; let baseDireita = 0;
-CONFIG.principais.forEach(v => baseEsquerda += v.viewsFixas);
-CONFIG.secundarios.forEach(v => baseDireita += v.viewsFixas);
-CONFIG.ambos.forEach(v => { baseEsquerda += v.viewsFixas; baseDireita += v.viewsFixas; });
+const stringHoje = new Date().toISOString().split('T')[0]; // Pega a data atual do sistema no formato 'AAAA-MM-DD'
 
-// Se o navegador já tiver dados na memória, usa eles. Se estiver zerado (guia anônima), puxa a base do servidor!
+function somarBaseSegura(lista, tipoPlacar) {
+    lista.forEach(v => {
+        // Se a data do vídeo for IGUAL à data de hoje, pula e NÃO soma na largada inicial
+        if (v.data === stringHoje) return;
+
+        if (tipoPlacar === 'esquerda') baseEsquerda += v.viewsFixas;
+        if (tipoPlacar === 'direita') baseDireita += v.viewsFixas;
+        if (tipoPlacar === 'ambos') {
+            baseEsquerda += v.viewsFixas;
+            baseDireita += v.viewsFixas;
+        }
+    });
+}
+
+somarBaseSegura(CONFIG.principais, 'esquerda');
+somarBaseSegura(CONFIG.secundarios, 'direita');
+somarBaseSegura(CONFIG.ambos, 'ambos');
+
+// Inicia com o localStorage OU com a base calculada (sem os vídeos de hoje)
 let _v1 = parseInt(localStorage.getItem('torajo_v1')) || baseEsquerda; 
 let _v2 = parseInt(localStorage.getItem('torajo_v2')) || baseDireita;
 
@@ -305,7 +321,6 @@ async function _fV() {
     const blocoMinutosValido = (minutosAtuais % 25 === 0);
     const ultimaJanelaSalva = parseInt(localStorage.getItem('torajo_last_block')) || -1;
 
-    // Se estiver fora do bloco, atualiza as variáveis locais com o cache estável e desenha a barra
     if (!blocoMinutosValido || (minutosAtuais === ultimaJanelaSalva)) {
         _v1 = parseInt(localStorage.getItem('torajo_v1')) || _v1;
         _v2 = parseInt(localStorage.getItem('torajo_v2')) || _v2;
@@ -392,13 +407,8 @@ async function _fV() {
     }
 }
 
-// Renderiza os números de largada imediatamente no primeiro load
 _uP();
-
-// Inicia o espião do relógio a cada 30 segundos
 setInterval(_fV, 30000);
-
-// Faz a checagem inteligente de bloco inicial
 _fV(); 
 </script>
 </body>
