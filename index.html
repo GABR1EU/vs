@@ -209,83 +209,8 @@
     </div>
 
 <script>
-const CONFIG = {
-    keys: [
-        'AIzaSyBa1Hlfij8U0A7Ipu_Odcbsw2mOWwlrLxY',
-        'AIzaSyBqBbOLtNu-4uEV6Q5cSwVOR5n6b1eh3Uw',
-        'AIzaSyCzUYiP2nAS3EswSor4h_YPsON7S7wL9RM',
-        'AIzaSyDQNu9FwqLa0_i5eEhHiuYVGhQJzGcBX4A',
-        'AIzaSyDm-qvemTMfuSYz0lWlF_YQQkyJ369UYi4',
-        'AIzaSyBZl4xBbHCUxA2BqXBC6IgU1rVr90odE_w',
-        'AIzaSyC_bZXmBhJnMN_V9GJkTmoZxQK1gr6aSXo',
-        'AIzaSyD7GIYgA3sdo5WuiUehT6_lueTEg_NnmP0',
-        'AIzaSyBX1Ki2vVSIc0AwUYBcQnSiSRXkEkGXD7Y', 
-        'AIzaSyCwIc0_zxJ_pEEchsJMU-UPkK3Vj63qpNU', 
-        'AIzaSyDTN5Xk0snwmanEc131kXFdbl9gB-lSynk', 
-        'AIzaSyDbNY2IdT23pvjsGsIXy53cSe187K-lx-4',
-        'AIzaSyADxkRRi0MWFIgctPnaDvOSc7Nt-SHTnPQ',
-        'AIzaSyCyo0u-XTJLy6DjQ5IcUW7A1OUnd7yijTU',
-        'AIzaSyBjm4rr7njSItTjF_v8FQxMZJVy3xaGjHs',
-        'AIzaSyD_Yg9tkciVq86UUmfqO2SRYFipaNdI_2o',
-        'AIzaSyAfKLLayDtnFKz7cb80_ldHbtIh-WRRnoY',
-        'AIzaSyCp-qBHGCU6dPEUpYdp3dE1sB_V81gFzL0',
-        'AIzaSyB9R1ZPEbMYPzx69a3CCCMA2pAT1lFdEaE',
-        'AIzaSyD_4zX_NOX78ELIzEEtGv6mkoLrHGR3wnE',
-        'AIzaSyA0LrB4Z59r0dyHimM44Q6zBqg-Z9DUr3s',
-        'AIzaSyA_jKHDY2rrO8F1jTmeP92Zl7Au4T4CwDk',
-        'AIzaSyCMtV9HvtXIzc8iQmMxqVqRcGvCaK5Hbgw',
-        'AIzaSyBgc5tVJBr46hVtEXOo7P4ygoLAjlImus0',
-        'AIzaSyBptqKjhuzs8C-iGGfXl8_d4osDf0f0pEA',
-        'AIzaSyBnf-IgZ0nqz8SKxQJ41YDAWMIjguONgzM',
-        'AIzaSyB15bsKcp6zHUdleVF9HiU_xjF_rjHqIvY',
-        'AIzaSyDFYVv7mr1i4T1DKxicv9ptZ3bITY_32gY'
-    ],
-    
-    principais: [
-        { id: 'j-rlc0o6ILA', data: '2026-05-16', viewsFixas: 300000 },
-        { id: 'aP_1McdVF_4', data: '2026-05-15', viewsFixas: 250000 },
-        { id: 'OHZHCgU9Y9g', data: '2026-05-12', viewsFixas: 1200000 },
-        { id: '9kdYCYZtom8', data: '2026-05-17', viewsFixas: 1200000 },
-        { id: 'CFrrpVBsTWU', data: '2026-05-17', viewsFixas: 300000 }
-    ],
-    
-    secundarios: [
-        { id: '9c3wOQRGR30', data: '2026-05-16', viewsFixas: 900000 },
-        { id: 'l0mNft1jFjI', data: '2026-05-14', viewsFixas: 850000 },
-        { id: 'P1aI_WmkqAY', data: '2026-05-10', viewsFixas: 300000 }, 
-        { id: 'XoVvt8Ws12U', data: '2026-05-09', viewsFixas: 900000 },
-        { id: '93PezDiU5vc', data: '2026-05-08', viewsFixas: 250000 }
-    ],
-
-    ambos: [
-        { id: 'NrUluayuOK4', data: '2026-05-17', viewsFixas: 400000 }, 
-        { id: 'YC5jGimSeNo', data: '2026-05-16', viewsFixas: 370000 },
-        { id: 'Q72h8lVbNaE', data: '2026-05-15', viewsFixas: 400000 }
-    ]
-};
-
-let currentKeyIndex = 0;
-
-// --- MATEMÁTICA DA BASE INICIAL INTELIGENTE (UTC FIXO) ---
-let baseEsquerda = 0; let baseDireita = 0;
-const dHoje = new Date();
-const stringHoje = `${dHoje.getUTCFullYear()}-${String(dHoje.getUTCMonth()+1).padStart(2,'0')}-${String(dHoje.getUTCDate()).padStart(2,'0')}`;
-
-function somarBaseSegura(lista, tipoPlacar) {
-    lista.forEach(v => {
-        if (v.data === stringHoje) return; // Ignora o dia de hoje no primeiro milissegundo do load
-        if (tipoPlacar === 'esquerda') baseEsquerda += v.viewsFixas;
-        if (tipoPlacar === 'direita') baseDireita += v.viewsFixas;
-        if (tipoPlacar === 'ambos') { baseEsquerda += v.viewsFixas; baseDireita += v.viewsFixas; }
-    });
-}
-
-somarBaseSegura(CONFIG.principais, 'esquerda');
-somarBaseSegura(CONFIG.secundarios, 'direita');
-somarBaseSegura(CONFIG.ambos, 'ambos');
-
-let _v1 = parseInt(localStorage.getItem('torajo_v1')) || baseEsquerda; 
-let _v2 = parseInt(localStorage.getItem('torajo_v2')) || baseDireita;
+let _v1 = parseInt(localStorage.getItem('torajo_v1')) || 0; 
+let _v2 = parseInt(localStorage.getItem('torajo_v2')) || 0;
 
 function _uP() {
     const t = (_v1 + _v2) || 1;
@@ -310,115 +235,33 @@ function _uP() {
     document.getElementById('txtDireita').innerText = _v2.toLocaleString('pt-BR') + " views";
 }
 
-async function _fV(forcarPeloLoop = false) {
-    const agora = Date.now();
-    const minutosAtuais = new Date(agora).getMinutes();
-    
-    const blocoMinutosValido = (minutosAtuais % 25 === 0);
-    const ultimaJanelaSalva = parseInt(localStorage.getItem('torajo_last_block')) || -1;
-
-    // Se NÃO for o loop de tempo real da aba aberta, valida a trava estrita dos 25 minutos
-    if (!forcarPeloLoop && (!blocoMinutosValido || (minutosAtuais === ultimaJanelaSalva))) {
-        _v1 = parseInt(localStorage.getItem('torajo_v1')) || _v1;
-        _v2 = parseInt(localStorage.getItem('torajo_v2')) || _v2;
-        _uP(); 
-        return;
-    }
-
-    let somaFixaEsquerda = 0;
-    let somaFixaDireita = 0;
-    let idsParaChamarAPI = [];
-    const tresDiasEmMs = 3 * 24 * 60 * 60 * 1000;
-
-    function analisarVideos(lista, tipoPlacar) {
-        lista.forEach(video => {
-            const p = video.data.split('-');
-            const dataLancamento = Date.UTC(parseInt(p[0]), parseInt(p[1]) - 1, parseInt(p[2]));
-            
-            if (agora - dataLancamento > tresDiasEmMs) {
-                if (tipoPlacar === 'esquerda') somaFixaEsquerda += video.viewsFixas;
-                if (tipoPlacar === 'direita') somaFixaDireita += video.viewsFixas;
-                if (tipoPlacar === 'ambos') { somaFixaEsquerda += video.viewsFixas; somaFixaDireita += video.viewsFixas; }
-            } else {
-                idsParaChamarAPI.push(video.id);
-            }
-        });
-    }
-
-    analisarVideos(CONFIG.principais, 'esquerda');
-    analisarVideos(CONFIG.secundarios, 'direita');
-    analisarVideos(CONFIG.ambos, 'ambos');
-
-    if (idsParaChamarAPI.length === 0) {
-        _v1 = somaFixaEsquerda; _v2 = somaFixaDireita;
-        localStorage.setItem('torajo_v1', _v1);
-        localStorage.setItem('torajo_v2', _v2);
-        localStorage.setItem('torajo_last_block', minutosAtuais);
-        _uP();
-        return;
-    }
-
-    const API_KEY = CONFIG.keys[currentKeyIndex];
-    const uniqueIdsStr = [...new Set(idsParaChamarAPI)].join(',');
-    const url = `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${uniqueIdsStr}&key=${API_KEY}`;
-
+async function atualizarPlacar() {
     try {
-        const r = await fetch(url);
-        const d = await r.json();
+        // Como o HTML e a pasta /api rodam no mesmo domínio da Vercel, a chamada é direta:
+        const r = await fetch('/api/get-views');
+        const data = await r.json();
         
-        if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
-            if (currentKeyIndex < CONFIG.keys.length - 1) {
-                currentKeyIndex++;
-                return _fV(forcarPeloLoop); 
-            }
-            return;
-        }
-
-        if (d.items) {
-            let s1 = somaFixaEsquerda; 
-            let s2 = somaFixaDireita;
-            const viewsMap = {};
-            
-            d.items.forEach(v => { viewsMap[v.id] = parseInt(v.statistics.viewCount); });
-            
-            CONFIG.principais.forEach(v => { if (viewsMap[v.id]) s1 += viewsMap[v.id]; });
-            CONFIG.secundarios.forEach(v => { if (viewsMap[v.id]) s2 += viewsMap[v.id]; });
-            CONFIG.ambos.forEach(v => { 
-                if (viewsMap[v.id]) { s1 += viewsMap[v.id]; s2 += viewsMap[v.id]; }
-            });
-
-            _v1 = s1; _v2 = s2;
-            
+        if (data.v1 && data.v2) {
+            _v1 = data.v1;
+            _v2 = data.v2;
             localStorage.setItem('torajo_v1', _v1);
             localStorage.setItem('torajo_v2', _v2);
-            localStorage.setItem('torajo_last_block', minutosAtuais); 
             _uP();
         }
     } catch (e) { 
-        console.error("Erro na conexão API, mantendo cache."); 
-        _v1 = parseInt(localStorage.getItem('torajo_v1')) || _v1;
-        _v2 = parseInt(localStorage.getItem('torajo_v2')) || _v2;
+        console.error("Erro ao buscar dados do servidor, usando cache local.");
         _uP(); 
     }
 }
 
-// Inicializa o ecrã imediatamente com segurança
-_v1 = parseInt(localStorage.getItem('torajo_v1')) || _v1;
-_v2 = parseInt(localStorage.getItem('torajo_v2')) || _v2;
+// Inicializa a tela com o que tiver guardado
 _uP();
 
-// 1. Monitoriza acessos e F5 a cada 30 segundos
-setInterval(() => {
-    _fV(false); 
-}, 30000);
+// Faz a primeira busca assim que abre
+atualizarPlacar();
 
-// 2. Garante o "Live ao vivo" forçando o bypass da trava a cada 25 minutos para abas abertas
-setInterval(() => {
-    _fV(true); 
-}, 1500000);
-
-// Executa a primeira checagem inteligente no load
-_fV(false); 
+// Atualiza a cada 1 minuto (o usuário recebe o dado atualizado da CDN se houver)
+setInterval(atualizarPlacar, 60000);
 </script>
 </body>
 </html>
