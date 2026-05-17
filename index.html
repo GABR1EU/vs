@@ -291,15 +291,13 @@ function _uP() {
 
 async function _fV() {
     const agora = Date.now();
-    
-    // --- MUDANÇA CRUCIAL: TRAVA DE BLOCO POR MINUTO DO RELÓGIO REAL ---
     const minutosAtuais = new Date(agora).getMinutes();
-    // Bloqueia em janelas fixas: só deixa passar se o minuto for divisível por 15 (ex: :00, :15, :30, :45)
-    const blocoMinutosValido = (minutosAtuais % 15 === 0);
     
+    // CORRIGIDO: Janela baseada no bloco de 25 minutos (:00, :25, :50)
+    const blocoMinutosValido = (minutosAtuais % 25 === 0);
     const ultimaJanelaSalva = parseInt(localStorage.getItem('torajo_last_block')) || -1;
 
-    // Se NÃO estamos em um minuto de virada (:00, :15, etc) OU se essa virada já foi consultada neste minuto, barra a API!
+    // Se não for o minuto exato do bloco, barra a API e renderiza o que está guardado
     if (!blocoMinutosValido || (minutosAtuais === ultimaJanelaSalva)) {
         _uP(); 
         return;
@@ -350,7 +348,7 @@ async function _fV() {
         if (d.error && (d.error.code === 403 || d.error.reason === 'quotaExceeded')) {
             if (currentKeyIndex < CONFIG.keys.length - 1) {
                 currentKeyIndex++;
-                return _fV(); // Pula de chave mantendo o fluxo
+                return _fV(); 
             }
             return;
         }
@@ -372,7 +370,7 @@ async function _fV() {
             
             localStorage.setItem('torajo_v1', _v1);
             localStorage.setItem('torajo_v2', _v2);
-            localStorage.setItem('torajo_last_block', minutosAtuais); // Trava o minuto atual
+            localStorage.setItem('torajo_last_block', minutosAtuais); 
             
             _uP();
         }
@@ -382,12 +380,13 @@ async function _fV() {
     }
 }
 
-// Inicializa a tela com o cache salvo imediatamente
+// Inicializa a interface imediatamente com os dados salvos
 _uP();
 
-// Roda a verificação de minuto a cada 30 segundos de forma leve
-// (Não gasta cota, ele só consulta a API do Google se o relógio bater :00, :15, :30 ou :45)
+// Roda o espião do relógio a cada 30 segundos de forma ultraleve
 setInterval(_fV, 30000);
+
+// Faz a checagem inicial inteligente no load da página
 _fV(); 
 </script>
 </body>
