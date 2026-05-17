@@ -263,8 +263,16 @@ const CONFIG = {
 };
 
 let currentKeyIndex = 0;
-let _v1 = parseInt(localStorage.getItem('torajo_v1')) || 0; 
-let _v2 = parseInt(localStorage.getItem('torajo_v2')) || 0;
+
+// --- MATEMÁTICA DA BASE INICIAL DE SEGURANÇA ---
+let baseEsquerda = 0; let baseDireita = 0;
+CONFIG.principais.forEach(v => baseEsquerda += v.viewsFixas);
+CONFIG.secundarios.forEach(v => baseDireita += v.viewsFixas);
+CONFIG.ambos.forEach(v => { baseEsquerda += v.viewsFixas; baseDireita += v.viewsFixas; });
+
+// Se o navegador já tiver dados na memória, usa eles. Se estiver zerado (guia anônima), puxa a base do servidor!
+let _v1 = parseInt(localStorage.getItem('torajo_v1')) || baseEsquerda; 
+let _v2 = parseInt(localStorage.getItem('torajo_v2')) || baseDireita;
 
 function _uP() {
     const t = (_v1 + _v2) || 1;
@@ -294,12 +302,13 @@ async function _fV() {
     const agora = Date.now();
     const minutosAtuais = new Date(agora).getMinutes();
     
-    // CORRIGIDO: Janela baseada no bloco de 25 minutos (:00, :25, :50)
     const blocoMinutosValido = (minutosAtuais % 25 === 0);
     const ultimaJanelaSalva = parseInt(localStorage.getItem('torajo_last_block')) || -1;
 
-    // Se não for o minuto exato do bloco, barra a API e renderiza o que está guardado
+    // Se estiver fora do bloco, atualiza as variáveis locais com o cache estável e desenha a barra
     if (!blocoMinutosValido || (minutosAtuais === ultimaJanelaSalva)) {
+        _v1 = parseInt(localStorage.getItem('torajo_v1')) || _v1;
+        _v2 = parseInt(localStorage.getItem('torajo_v2')) || _v2;
         _uP(); 
         return;
     }
@@ -377,17 +386,19 @@ async function _fV() {
         }
     } catch (e) { 
         console.error("Erro na conexão API, mantendo cache."); 
+        _v1 = parseInt(localStorage.getItem('torajo_v1')) || _v1;
+        _v2 = parseInt(localStorage.getItem('torajo_v2')) || _v2;
         _uP(); 
     }
 }
 
-// Inicializa a interface imediatamente com os dados salvos
+// Renderiza os números de largada imediatamente no primeiro load
 _uP();
 
-// Roda o espião do relógio a cada 30 segundos de forma ultraleve
+// Inicia o espião do relógio a cada 30 segundos
 setInterval(_fV, 30000);
 
-// Faz a checagem inicial inteligente no load da página
+// Faz a checagem inteligente de bloco inicial
 _fV(); 
 </script>
 </body>
