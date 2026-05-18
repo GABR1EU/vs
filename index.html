@@ -250,7 +250,6 @@ function _uP() {
 
 async function atualizarPlacar() {
     try {
-        // Busca os dados processados e cacheados direto do seu servidor na Vercel
         const r = await fetch('/api/get-views');
         const data = await r.json();
         
@@ -267,13 +266,8 @@ async function atualizarPlacar() {
     }
 }
 
-// Inicializa a tela com o que estiver guardado no cache do navegador
 _uP();
-
-// Faz a primeira busca automática assim que o site abre
 atualizarPlacar();
-
-// Consulta o servidor a cada 1 minuto (Leve, consome apenas 0,03 KB da CDN)
 setInterval(atualizarPlacar, 60000);
 </script>
 </body>
