@@ -15,7 +15,8 @@ const CONFIG = {
         { id: 'l0mNft1jFjI', viewsFixas: 850000 },
         { id: 'P1aI_WmkqAY', viewsFixas: 300000 }, 
         { id: 'XoVvt8Ws12U', viewsFixas: 900000 },
-        { id: '93PezDiU5vc', viewsFixas: 250000 }
+        { id: '93PezDiU5vc', viewsFixas: 250000 },
+        { id: 'APpxoX_Kueo', viewsFixas: 300000 }
     ],
     ambos: [
         { id: 'NrUluayuOK4', viewsFixas: 400000 }, 
