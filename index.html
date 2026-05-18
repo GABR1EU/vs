@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mundo Torajo - Versus Live</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --cor-esquerda: #2ecc71; 
@@ -34,6 +39,34 @@
             margin: 0;
         }
 
+        /* --- CONFIGURAÇÃO MOBILE (CELULAR) --- */
+        @media (max-width: 768px) {
+            #placar-stage {
+                width: 100% !important; 
+                aspect-ratio: 9 / 16; 
+                background-image: url('ImagemMobile.png');
+                background-size: 100% auto;
+                padding-top: 10px; 
+            }
+            .container { 
+                width: 98% !important; 
+                margin-bottom: 25px; 
+            }
+            .nome-personagem { 
+                font-family: 'Bangers', cursive !important; 
+                font-size: 2.1rem !important; 
+                font-weight: normal !important;
+                color: #ffffff !important; 
+                -webkit-text-stroke: 1.5px #000 !important;
+                text-shadow: 2px 2px 0px rgba(0,0,0,0.8) !important;
+                background: none !important;
+                padding: 0 !important;
+            }
+            .barra-container { height: 28px !important; }
+            .views { font-size: 0.8rem !important; padding: 6px 12px !important; color: #fff !important; }
+        }
+
+        /* --- CONFIGURAÇÃO DESKTOP (PC) --- */
         @media (min-width: 769px) {
             #placar-stage {
                 max-width: 1300px; 
@@ -45,27 +78,7 @@
             .nome-personagem { font-size: 2.2rem; }
         }
 
-        @media (max-width: 768px) {
-            #placar-stage {
-                width: 100% !important; 
-                aspect-ratio: 9 / 16; 
-                background-image: url('ImagemMobile.png');
-                background-size: 100% auto;
-                padding-top: 10px; 
-            }
-            .container { width: 95% !important; margin-bottom: 25px; }
-            .nome-personagem { 
-                font-family: 'Impact', sans-serif !important; 
-                font-size: 1.3rem !important; 
-                font-weight: 900 !important;
-                color: #ffffff !important; 
-                -webkit-text-stroke: 1.8px #000 !important;
-                text-shadow: 3px 3px 6px rgba(0,0,0,1) !important;
-            }
-            .barra-container { height: 28px !important; }
-            .views { font-size: 0.8rem !important; padding: 6px 12px !important; color: #fff !important; }
-        }
-
+        /* --- ESTILOS COMPARTILHADOS --- */
         .container {
             width: 90%; 
             display: flex;
@@ -237,7 +250,7 @@ function _uP() {
 
 async function atualizarPlacar() {
     try {
-        // Como o HTML e a pasta /api rodam no mesmo domínio da Vercel, a chamada é direta:
+        // Busca os dados processados e cacheados direto do seu servidor na Vercel
         const r = await fetch('/api/get-views');
         const data = await r.json();
         
@@ -254,13 +267,13 @@ async function atualizarPlacar() {
     }
 }
 
-// Inicializa a tela com o que tiver guardado
+// Inicializa a tela com o que estiver guardado no cache do navegador
 _uP();
 
-// Faz a primeira busca assim que abre
+// Faz a primeira busca automática assim que o site abre
 atualizarPlacar();
 
-// Atualiza a cada 1 minuto (o usuário recebe o dado atualizado da CDN se houver)
+// Consulta o servidor a cada 1 minuto (Leve, consome apenas 0,03 KB da CDN)
 setInterval(atualizarPlacar, 60000);
 </script>
 </body>
