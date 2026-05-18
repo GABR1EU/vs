@@ -7,7 +7,8 @@ const CONFIG = {
         { id: 'aP_1McdVF_4', viewsFixas: 250000 },
         { id: 'OHZHCgU9Y9g', viewsFixas: 1200000 },
         { id: '9kdYCYZtom8', viewsFixas: 1200000 },
-        { id: 'CFrrpVBsTWU', viewsFixas: 300000 }
+        { id: 'CFrrpVBsTWU', viewsFixas: 300000 },
+        { id: 'oyTlY_aK7W0', viewsFixas: 500000}
     ],
     secundarios: [
         { id: '9c3wOQRGR30', viewsFixas: 900000 },
