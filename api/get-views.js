@@ -1,8 +1,8 @@
 // api/get-views.js
 
 const CONFIG = {
-    principais: ['j-rlc0o6ILA', 'aP_1McdVF_4', 'OHZHCgU9Y9g', '9kdYCYZtom8', 'CFrrpVBsTWU', 'oyTlY_aK7W0', 'Y5k9pbT9ZQQ'],
-    secundarios: ['9c3wOQRGR30', 'l0mNft1jFjI', 'P1aI_WmkqAY', 'XoVvt8Ws12U', '93PezDiU5vc', 'APpxoX_Kueo'],
+    principais: ['j-rlc0o6ILA', 'aP_1McdVF_4', 'OHZHCgU9Y9g', '9kdYCYZtom8', 'CFrrpVBsTWU', 'oyTlY_aK7W0', 'Y5k9pbT9ZQQ', 'LF1U8TZUSx4'],
+    secundarios: ['9c3wOQRGR30', 'l0mNft1jFjI', 'P1aI_WmkqAY', 'XoVvt8Ws12U', '93PezDiU5vc', 'APpxoX_Kueo', 'wDe4g28vog8'],
     ambos: ['NrUluayuOK4', 'YC5jGimSeNo', 'Q72h8lVbNaE']
 };
 
