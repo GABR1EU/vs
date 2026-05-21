@@ -11,8 +11,8 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     
-    // BLINDAGEM DE COTA MÁXIMA: Trava o resultado na CDN da Vercel por 15 minutos (900 segundos)
-    res.setHeader('Cache-Control', 's-maxage=900, stale-while-revalidate=60');
+    // BLINDAGEM CORRIGIDA: 'public, max-age=0' obriga a Vercel a salvar o resultado na CDN dela por 15 minutos
+    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=900, stale-while-revalidate=60');
 
     const API_KEY = process.env.YOUTUBE_API_KEY; 
     
