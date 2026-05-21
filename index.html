@@ -58,12 +58,11 @@
             white-space: nowrap; 
         }
 
-        /* --- CONFIGURAÇÃO MOBILE (CELULAR) --- */
-        @media (max-width: 768px) {
+        /* --- CONFIGURAÇÃO MOBILE (CELULAR - AJUSTADO PARA ATÉ 600PX) --- */
+        @media (max-width: 600px) {
             #placar-stage {
                 width: 100% !important; 
                 aspect-ratio: 9 / 16; 
-                /* LINK ATUALIZADO DO DISCORD MOBILE */
                 background-image: url('https://media.discordapp.net/attachments/1506298319561953453/1506298457483382864/ImagemMobile.png?ex=6a0f12c1&is=6a0dc141&hm=79d7debe97bc80388644493f334a81cd3dd8aa21e6c777b57769661d1635db24&=&format=webp&quality=lossless&width=533&height=948'); 
                 background-size: 100% auto;
                 padding-top: 10px; 
@@ -81,12 +80,12 @@
             .views { font-size: 0.8rem !important; padding: 6px 12px !important; color: #fff !important; }
         }
 
-        /* --- CONFIGURAÇÃO DESKTOP (PC) --- */
-        @media (min-width: 769px) {
+        /* --- CONFIGURAÇÃO DESKTOP (PC - AJUSTADO PARA A PARTIR DE 601PX) --- */
+        @media (min-width: 601px) {
             #placar-stage {
+                width: 100%;
                 max-width: 1300px; 
                 aspect-ratio: 2200 / 1500;
-                /* LINK ATUALIZADO DO DISCORD DESKTOP */
                 background-image: url('https://media.discordapp.net/attachments/1506298319561953453/1506298444564660414/ImagemDesktop.png?ex=6a0f12be&is=6a0dc13e&hm=645ad69b9227ecd87e8affbe092cb60f397f8101b95af7a2f4544fc2644c4757&=&format=webp&quality=lossless&width=1376&height=938'); 
                 background-size: contain;
             }
@@ -273,7 +272,6 @@ async function atualizarPlacar() {
 
 _uP();
 atualizarPlacar();
-// Configurado para buscar dados na Vercel a cada 5 minutos (evita estourar requisições!)
 setInterval(atualizarPlacar, 300000); 
 </script>
 </body>
